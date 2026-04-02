@@ -1,459 +1,1329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Girl Power Coders ⚡</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --rose:    #FF3D8A;
-      --violet:  #8B2FC9;
-      --gold:    #FFD166;
-      --mint:    #06D6A0;
-      --deep:    #0D0618;
-      --surface: #160D2B;
-      --glass:   rgba(255,255,255,0.06);
-      --border:  rgba(255,61,138,0.25);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Girl Power Quiz 💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lavender:      #c084fc;
+    --light-purple:  #e9d5ff;
+    --pastel-blue:   #7dd3fc;
+    --mid-purple:    #a855f7;
+    --deep-purple:   #7c3aed;
+    --bright-blue:   #38bdf8;
+    --white-card:    rgba(255,255,255,0.93);
+    --text-dark:     #3b0764;
+    --text-mid:      #6b21a8;
+    --text-light:    #a78bfa;
+    --gold:          #fbbf24;
+  }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
 
-    body {
-      background: var(--deep);
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+  body {
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+    background: #f0e8ff;
+  }
 
-    /* ── Animated background ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(139,47,201,0.35) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(255,61,138,0.30) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(6,214,160,0.08) 0%, transparent 70%);
-      animation: pulse 8s ease-in-out infinite alternate;
-      pointer-events: none;
-      z-index: 0;
-    }
+  /* ── CUSTOM CURSOR ── */
+  #cursor {
+    position: fixed;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, #d4aaee 60%, #b88cdd 100%);
+    box-shadow: 0 0 12px rgba(180,130,220,0.7), 0 0 28px rgba(180,130,220,0.3);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.08s ease;
+  }
+  #cursor.clicking { transform: translate(-50%,-50%) scale(0.7); }
 
-    @keyframes pulse {
-      from { opacity: 0.7; }
-      to   { opacity: 1; }
-    }
+  .cursor-trail {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9990;
+    transform: translate(-50%,-50%);
+  }
 
-    /* ── Floating particles ── */
-    .particles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      animation: float linear infinite;
-      opacity: 0;
-    }
-    @keyframes float {
-      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 0.6; }
-      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
-    }
+  /* ── BACKGROUND CANVAS ── */
+  #bgCanvas {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  }
 
-    /* ── Layout ── */
-    main { position: relative; z-index: 1; }
+  /* ── APP SHELL ── */
+  #app {
+    position: relative; z-index: 10;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 28px 20px;
+  }
 
-    /* ── Hero ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-      gap: 1.5rem;
-    }
+  .screen { display: none; width: 100%; max-width: 780px; }
+  .screen.active { display: block; animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1); }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 0.4rem 1.2rem;
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gold);
-      backdrop-filter: blur(8px);
-      animation: fadeDown 0.8s ease both;
-    }
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(30px) scale(0.97); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
 
-    .hero-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 10vw, 7rem);
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -0.02em;
-      animation: fadeUp 0.9s ease 0.2s both;
-    }
+  /* ── PETAL CARD ── */
+  .petal-card {
+    background: rgba(255,255,255,0.90);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 2px solid rgba(168,85,247,0.35);
+    border-radius: 32px;
+    box-shadow:
+      0 8px 48px rgba(124,58,237,0.18),
+      0 2px 0 rgba(255,255,255,1) inset;
+    position: relative;
+    overflow: hidden;
+  }
 
-    .hero-title .gradient-text {
-      background: linear-gradient(135deg, var(--rose), var(--violet), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+  .petal-card::before {
+    content:'';
+    position: absolute;
+    top: 0; left: 10%; right: 10%; height: 3px;
+    background: linear-gradient(90deg, var(--pastel-blue), var(--light-purple), var(--lavender), var(--soft-pink), var(--pastel-blue));
+    background-size: 200%;
+    animation: shimmerBar 4s linear infinite;
+    border-radius: 0 0 8px 8px;
+  }
+  @keyframes shimmerBar {
+    0%   { background-position: 0%; }
+    100% { background-position: 200%; }
+  }
 
-    .hero-subtitle {
-      font-size: clamp(1rem, 3vw, 1.3rem);
-      font-weight: 300;
-      color: rgba(255,255,255,0.65);
-      max-width: 540px;
-      line-height: 1.7;
-      animation: fadeUp 0.9s ease 0.35s both;
-    }
+  /* ── LOGIN SCREEN ── */
+  .login-card { padding: 60px 52px; text-align: center; }
 
-    .hero-team {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp 0.9s ease 0.5s both;
-    }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,184,232,0.2);
+    border: 1px solid rgba(180,150,220,0.35);
+    border-radius: 50px;
+    padding: 8px 22px; margin-bottom: 30px;
+    font-size: 0.72rem; letter-spacing: 4px;
+    color: var(--deep-lavender); font-weight: 800;
+    text-transform: uppercase;
+  }
 
-    .team-pill {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(8px);
-      border-radius: 100px;
-      padding: 0.5rem 1.2rem;
-      font-size: 0.95rem;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .team-pill:hover {
-      transform: translateY(-3px);
-      border-color: var(--rose);
-    }
+  .quiz-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #c084fc 60%, #38bdf8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1; margin-bottom: 10px;
+    filter: drop-shadow(0 2px 16px rgba(168,85,247,0.4));
+    animation: titleGlow 3s ease-in-out infinite alternate;
+  }
+  @keyframes titleGlow {
+    from { filter: drop-shadow(0 2px 16px rgba(168,85,247,0.3)); }
+    to   { filter: drop-shadow(0 2px 36px rgba(168,85,247,0.75)); }
+  }
 
-    .scroll-hint {
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      color: rgba(255,255,255,0.3);
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      animation: bounce 2s ease-in-out infinite;
-    }
-    .scroll-hint::after {
-      content: '';
-      width: 1px;
-      height: 40px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50%       { transform: translateX(-50%) translateY(8px); }
-    }
+  .quiz-subtitle {
+    font-size: 1.05rem; color: var(--text-mid);
+    font-weight: 600; letter-spacing: 2px;
+    margin-bottom: 36px;
+  }
 
-    /* ── Sections ── */
-    section {
-      padding: 5rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+  .topic-pills {
+    display: flex; gap: 10px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 44px;
+  }
+  .pill {
+    display: flex; align-items: center; gap: 7px;
+    padding: 9px 22px; border-radius: 50px;
+    font-size: 0.88rem; font-weight: 800; letter-spacing: 1px;
+    transition: transform 0.2s ease;
+  }
+  .pill:hover { transform: translateY(-3px); }
+  .pill-butterfly { background: rgba(201,184,232,0.25); color: #9b7fd4; border: 1.5px solid rgba(180,150,220,0.4); }
+  .pill-fashion   { background: rgba(184,216,240,0.25); color: #5a9bc0; border: 1.5px solid rgba(150,190,220,0.4); }
+  .pill-makeup    { background: rgba(255,182,213,0.25); color: #c0567a; border: 1.5px solid rgba(220,130,170,0.4); }
+  .pill-cheer     { background: rgba(255,220,150,0.25); color: #b07820; border: 1.5px solid rgba(210,180,80,0.4); }
+  .pill-art       { background: rgba(160,220,180,0.25); color: #2d7a50; border: 1.5px solid rgba(100,200,140,0.4); }
 
-    .section-label {
-      font-size: 0.8rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--rose);
-      margin-bottom: 0.75rem;
-    }
+  /* Role toggle */
+  .role-toggle {
+    display: flex; margin: 0 auto 32px;
+    background: rgba(200,180,240,0.12);
+    border: 1.5px solid rgba(200,180,240,0.3);
+    border-radius: 18px; overflow: hidden;
+    max-width: 380px;
+  }
+  .role-btn {
+    flex: 1; padding: 14px 10px;
+    background: transparent; border: none;
+    font-family: 'Nunito', sans-serif; font-size: 0.82rem;
+    font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-light);
+    cursor: none; transition: all 0.25s ease;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+  .role-btn.active {
+    background: linear-gradient(135deg, rgba(180,150,230,0.3), rgba(150,190,230,0.2));
+    color: var(--text-dark);
+    box-shadow: inset 0 0 20px rgba(180,150,220,0.1);
+  }
+  .role-btn:first-child { border-right: 1.5px solid rgba(200,180,240,0.3); }
 
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
+  /* Login fields */
+  .login-fields { max-width: 420px; margin: 0 auto; }
+  .field-wrap { position: relative; margin-bottom: 16px; text-align: left; }
+  .field-label {
+    display: block;
+    font-size: 0.66rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--deep-lavender); font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .field-input {
+    width: 100%; padding: 14px 18px;
+    background: rgba(255,255,255,0.65);
+    border: 1.5px solid rgba(200,180,240,0.35);
+    border-radius: 14px;
+    color: var(--text-dark); font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem; font-weight: 700;
+    outline: none; transition: all 0.22s ease;
+    caret-color: var(--deep-lavender);
+  }
+  .field-input::placeholder { color: rgba(155,127,212,0.35); }
+  .field-input:focus {
+    border-color: rgba(155,127,212,0.6);
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 0 20px rgba(155,127,212,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+  .field-input.error {
+    border-color: rgba(220,80,120,0.6) !important;
+    animation: shake 0.4s ease;
+  }
+  .field-error {
+    font-size: 0.82rem; font-weight: 700; color: #d06080;
+    margin-top: 8px; min-height: 22px;
+    display: flex; align-items: center; gap: 5px;
+  }
 
-    .section-body {
-      color: rgba(255,255,255,0.6);
-      font-size: 1.05rem;
-      line-height: 1.8;
-      max-width: 600px;
-    }
+  .login-btn {
+    width: 100%; margin-top: 10px;
+    background: linear-gradient(135deg, #b89ed4, #9b7fd4, #7aade8);
+    color: #fff; border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 900;
+    padding: 17px; border-radius: 14px;
+    cursor: none; letter-spacing: 2px; text-transform: uppercase;
+    box-shadow: 0 6px 28px rgba(155,127,212,0.35), 0 3px 0 rgba(120,90,180,0.3);
+    transition: all 0.22s ease; position: relative; overflow: hidden;
+  }
+  .login-btn::after {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+    transform: translateX(-100%); transition: transform 0.5s ease;
+  }
+  .login-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(155,127,212,0.5), 0 3px 0 rgba(120,90,180,0.3); }
+  .login-btn:hover::after { transform: translateX(100%); }
 
-    /* ── Cards grid ── */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
+  .q-count-hint { margin-top: 20px; color: var(--text-light); font-size: 0.78rem; letter-spacing: 2px; font-weight: 700; }
 
-    .card {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 2rem;
-      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,61,138,0.06), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .card:hover { transform: translateY(-6px); border-color: var(--rose); box-shadow: 0 20px 60px rgba(255,61,138,0.15); }
-    .card:hover::before { opacity: 1; }
+  /* Welcome panels */
+  .welcome-panel {
+    border-radius: 18px; padding: 22px 26px;
+    margin-bottom: 24px; text-align: center; display: none;
+    animation: fadeUp 0.4s ease;
+  }
+  .welcome-panel.show { display: block; }
+  .welcome-panel.host-panel {
+    background: rgba(201,184,232,0.2);
+    border: 1.5px solid rgba(155,127,212,0.3);
+  }
+  .welcome-panel.player-panel {
+    background: rgba(184,216,240,0.2);
+    border: 1.5px solid rgba(120,180,220,0.3);
+  }
+  .panel-eyebrow {
+    font-size: 0.62rem; letter-spacing: 4px; text-transform: uppercase;
+    font-weight: 800; margin-bottom: 8px;
+  }
+  .host-panel .panel-eyebrow { color: var(--deep-lavender); }
+  .player-panel .panel-eyebrow { color: #5a9bc0; }
+  .panel-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700;
+  }
+  .host-panel .panel-name { color: var(--deep-lavender); }
+  .player-panel .panel-name { color: #4a85b0; }
+  .panel-code {
+    display: inline-block; margin-top: 10px;
+    background: rgba(255,255,255,0.6); border: 1px dashed rgba(155,127,212,0.4);
+    border-radius: 10px; padding: 6px 20px;
+    font-weight: 800; font-size: 0.9rem; color: var(--deep-lavender);
+    letter-spacing: 3px;
+  }
 
-    .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-    .card-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .card-text { color: rgba(255,255,255,0.55); font-size: 0.95rem; line-height: 1.7; }
+  /* ── COUNTDOWN ── */
+  .countdown-wrap { text-align: center; padding: 80px 30px; }
+  .countdown-eyebrow {
+    font-size: 0.82rem; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--text-mid); font-weight: 800; margin-bottom: 20px;
+  }
+  .countdown-num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(7rem, 22vw, 11rem);
+    font-weight: 900; line-height: 1; display: block;
+    background: linear-gradient(135deg, #9b7fd4, #c9b8e8, #7ab8e8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    filter: drop-shadow(0 4px 24px rgba(155,127,212,0.5));
+    animation: countPop 1s cubic-bezier(0.22,1,0.36,1);
+  }
+  @keyframes countPop {
+    0%   { transform: scale(2.2); opacity:0; }
+    60%  { transform: scale(0.95); opacity:1; }
+    100% { transform: scale(1); opacity:1; }
+  }
 
-    /* ── Placeholder blocks ── */
-    .placeholder {
-      border: 2px dashed rgba(255,61,138,0.3);
-      border-radius: 16px;
-      padding: 3rem 2rem;
-      text-align: center;
-      color: rgba(255,255,255,0.3);
-      font-size: 0.95rem;
-      margin-top: 2rem;
-    }
-    .placeholder span { display: block; font-size: 2rem; margin-bottom: 0.75rem; }
+  /* ── QUIZ SCREEN ── */
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+  .progress-wrap { flex: 1; min-width: 180px; }
+  .progress-label {
+    font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-mid); font-weight: 800; margin-bottom: 7px;
+  }
+  .progress-bar {
+    height: 8px; background: rgba(200,180,240,0.2);
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid rgba(200,180,240,0.3);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pastel-blue), var(--light-purple), var(--lavender));
+    background-size: 200%; border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    animation: shimmerBar 3s linear infinite;
+  }
+  .score-badge {
+    background: rgba(201,184,232,0.2); border: 1.5px solid rgba(180,150,220,0.3);
+    color: var(--text-mid); font-weight: 800; font-size: 0.9rem;
+    padding: 10px 22px; border-radius: 50px;
+  }
+  .score-badge span { color: var(--deep-lavender); }
 
-    /* ── Divider ── */
-    .divider {
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--border), transparent);
-      margin: 0 2rem;
-    }
+  .question-card { padding: 38px 42px; margin-bottom: 16px; }
 
-    /* ── Footer ── */
-    footer {
-      text-align: center;
-      padding: 3rem 2rem;
-      color: rgba(255,255,255,0.2);
-      font-size: 0.85rem;
-      position: relative;
-      z-index: 1;
-    }
-    footer strong { color: var(--rose); }
+  .topic-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.68rem; font-weight: 800; letter-spacing: 2.5px;
+    padding: 5px 16px; border-radius: 50px; margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .tag-butterfly { background: rgba(201,184,232,0.25); color: #9b7fd4; border: 1.5px solid rgba(180,150,220,0.35); }
+  .tag-fashion   { background: rgba(184,216,240,0.25); color: #5a9bc0; border: 1.5px solid rgba(150,190,220,0.35); }
+  .tag-makeup    { background: rgba(255,182,213,0.25); color: #c0567a; border: 1.5px solid rgba(220,130,170,0.35); }
+  .tag-cheer     { background: rgba(255,220,150,0.25); color: #b07820; border: 1.5px solid rgba(210,180,80,0.35); }
+  .tag-art       { background: rgba(160,220,180,0.25); color: #2d7a50; border: 1.5px solid rgba(100,200,140,0.35); }
 
-    /* ── Animations ── */
-    @keyframes fadeUp   { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
-  </style>
+  .q-number {
+    font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-light); font-weight: 800; margin-bottom: 12px;
+  }
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700;
+    color: var(--text-dark); line-height: 1.55; margin-bottom: 28px;
+  }
+
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:520px){ .options-grid { grid-template-columns: 1fr; } }
+
+  .option-btn {
+    background: rgba(255,255,255,0.65);
+    border: 1.5px solid rgba(200,180,240,0.3);
+    color: var(--text-dark);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    padding: 16px 18px; border-radius: 16px;
+    cursor: none; text-align: left;
+    transition: all 0.2s ease;
+    display: flex; align-items: center; gap: 10px;
+    backdrop-filter: blur(10px);
+    position: relative; overflow: hidden;
+  }
+  .option-btn::before {
+    content:''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(201,184,232,0.15), transparent);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .option-letter {
+    width: 30px; height: 30px; flex-shrink: 0;
+    background: rgba(201,184,232,0.2);
+    border: 1.5px solid rgba(180,150,220,0.3);
+    border-radius: 8px;
+    font-size: 0.72rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--deep-lavender); transition: all 0.2s ease;
+  }
+  .option-btn:hover:not(:disabled) {
+    background: rgba(201,184,232,0.25);
+    border-color: rgba(155,127,212,0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(155,127,212,0.15);
+  }
+  .option-btn:hover:not(:disabled)::before { opacity: 1; }
+  .option-btn:hover:not(:disabled) .option-letter { background: var(--lavender); color: #fff; border-color: var(--lavender); }
+
+  .option-btn.correct {
+    background: rgba(160,220,180,0.2) !important;
+    border-color: rgba(100,200,140,0.5) !important;
+    color: #2d7a50 !important;
+    box-shadow: 0 0 28px rgba(100,200,140,0.2) !important;
+    animation: correctPop 0.4s ease;
+  }
+  .option-btn.correct .option-letter { background: #5dc68a; border-color: #5dc68a; color: #fff; }
+
+  .option-btn.wrong {
+    background: rgba(220,100,130,0.15) !important;
+    border-color: rgba(200,80,110,0.45) !important;
+    color: #a03050 !important;
+    animation: shake 0.45s ease;
+  }
+  .option-btn.wrong .option-letter { background: #e07090; border-color: #e07090; color: #fff; }
+
+  .option-btn.reveal-correct {
+    background: rgba(160,220,180,0.12) !important;
+    border-color: rgba(100,200,140,0.35) !important;
+    color: #2d7a50 !important;
+  }
+  .option-btn.reveal-correct .option-letter { background: #80c8a0; border-color: #80c8a0; color: #fff; }
+
+  @keyframes correctPop {
+    0%  { transform: scale(1); }
+    35% { transform: scale(1.04); }
+    100%{ transform: scale(1); }
+  }
+  @keyframes shake {
+    0%,100%{ transform: translateX(0); }
+    20%{ transform: translateX(-8px); }
+    40%{ transform: translateX(8px); }
+    60%{ transform: translateX(-5px); }
+    80%{ transform: translateX(5px); }
+  }
+
+  .feedback-banner {
+    padding: 14px 18px; border-radius: 14px;
+    font-size: 0.95rem; font-weight: 800;
+    margin-top: 16px; display: none;
+    align-items: center; gap: 8px;
+    animation: feedSlide 0.3s ease;
+  }
+  .feedback-banner.show { display: flex; }
+  .feedback-banner.right { background: rgba(160,220,180,0.18); color: #2d7a50; border: 1.5px solid rgba(100,200,140,0.3); }
+  .feedback-banner.wrong-fb { background: rgba(220,100,130,0.12); color: #a03050; border: 1.5px solid rgba(200,80,110,0.25); }
+
+  @keyframes feedSlide {
+    from { opacity:0; transform: translateY(-8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .next-btn {
+    display: none; width: 100%;
+    background: linear-gradient(135deg, #b89ed4, #9b7fd4);
+    color: #fff; border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;
+    padding: 16px; border-radius: 14px; cursor: none;
+    margin-top: 14px;
+    box-shadow: 0 6px 24px rgba(155,127,212,0.3), 0 3px 0 rgba(120,90,180,0.25);
+    transition: all 0.2s ease;
+  }
+  .next-btn.show { display: block; animation: feedSlide 0.3s ease; }
+  .next-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(155,127,212,0.45), 0 3px 0 rgba(120,90,180,0.25); }
+
+  /* ── HOST DASHBOARD ── */
+  .host-dash-header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+  }
+  .host-crown-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(201,184,232,0.25); border: 1.5px solid rgba(155,127,212,0.35);
+    border-radius: 50px; padding: 6px 16px;
+    font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--deep-lavender); font-weight: 800;
+  }
+  .host-dash-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700; color: var(--text-dark);
+  }
+  .host-dash-right { text-align: right; }
+  .host-q-counter {
+    font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-mid); font-weight: 800;
+  }
+  .host-code-pill {
+    display: inline-block; margin-top: 4px;
+    background: rgba(201,184,232,0.2); border: 1px dashed rgba(155,127,212,0.35);
+    border-radius: 8px; padding: 4px 14px;
+    font-size: 0.82rem; font-weight: 900; color: var(--deep-lavender); letter-spacing: 2px;
+  }
+  .host-question-card { padding: 34px 40px; margin-bottom: 14px; }
+  .host-topic-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.65rem; font-weight: 800; letter-spacing: 2px;
+    padding: 4px 14px; border-radius: 50px; margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .host-q-num { font-size: 0.62rem; letter-spacing: 3px; color: var(--text-light); font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
+  .host-q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; color: var(--text-dark); line-height: 1.5; margin-bottom: 22px;
+  }
+  .host-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  @media(max-width:520px){ .host-options-grid { grid-template-columns:1fr; } }
+  .host-option {
+    background: rgba(255,255,255,0.55); border: 1.5px solid rgba(200,180,240,0.25);
+    border-radius: 12px; padding: 12px 16px;
+    display: flex; align-items: center; gap: 9px;
+    font-weight: 700; color: var(--text-dark); font-size: 0.95rem;
+  }
+  .host-opt-letter {
+    width: 28px; height: 28px; flex-shrink: 0;
+    background: rgba(201,184,232,0.25); border: 1.5px solid rgba(180,150,220,0.3);
+    border-radius: 7px; font-size: 0.7rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--deep-lavender);
+  }
+  .host-answer-reveal {
+    display: none; align-items: center; gap: 10px;
+    background: rgba(160,220,180,0.15); border: 1.5px solid rgba(100,200,140,0.3);
+    border-radius: 12px; padding: 14px 18px;
+    font-weight: 800; color: #2d7a50; font-size: 0.95rem;
+    animation: feedSlide 0.3s ease;
+  }
+  .host-answer-reveal.show { display: flex; }
+  .host-controls { margin-top: 14px; }
+  .host-progress-bar { height: 7px; background: rgba(200,180,240,0.2); border-radius: 10px; overflow: hidden; margin-bottom: 14px; border: 1px solid rgba(200,180,240,0.25); }
+  .host-progress-fill { height:100%; background: linear-gradient(90deg, var(--pastel-blue), var(--lavender)); border-radius:10px; transition:width 0.6s cubic-bezier(0.4,0,0.2,1); animation:shimmerBar 3s linear infinite; background-size:200%; }
+  .host-reveal-btn {
+    width: 100%; margin-bottom: 10px;
+    background: linear-gradient(135deg, #aad4b8, #6db88a);
+    color: #fff; border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;
+    padding: 14px; border-radius: 12px; cursor: none;
+    box-shadow: 0 4px 18px rgba(100,180,130,0.3), 0 2px 0 rgba(60,140,90,0.2);
+    transition: all 0.2s ease;
+  }
+  .host-reveal-btn:hover { transform: translateY(-2px); }
+  .host-next-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #b89ed4, #9b7fd4);
+    color: #fff; border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;
+    padding: 14px; border-radius: 12px; cursor: none;
+    box-shadow: 0 4px 18px rgba(155,127,212,0.3), 0 2px 0 rgba(120,90,180,0.2);
+    transition: all 0.2s ease;
+  }
+  .host-next-btn:hover { transform: translateY(-2px); }
+
+  /* ── END SCREEN ── */
+  .end-card { padding: 56px 52px; text-align: center; }
+  .trophy-icon { font-size: 5.5rem; display: block; margin-bottom: 14px; animation: trophyIn 0.8s cubic-bezier(0.22,1,0.36,1); }
+  @keyframes trophyIn {
+    0%  { transform: scale(0) rotate(-20deg); opacity:0; }
+    65% { transform: scale(1.25) rotate(6deg); }
+    100%{ transform: scale(1) rotate(0deg); opacity:1; }
+  }
+  .end-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5vw, 2.8rem); font-weight: 900;
+    background: linear-gradient(135deg, #7c3aed, #a855f7, #38bdf8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 2px 20px rgba(168,85,247,0.5));
+  }
+  .end-score-big {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 12vw, 6rem); font-weight: 900;
+    color: #7c3aed; line-height: 1; margin: 16px 0 6px;
+    filter: drop-shadow(0 4px 24px rgba(124,58,237,0.5));
+  }
+  .end-score-big em { color: #a855f7; font-style: normal; }
+  .end-score-label { color: var(--text-light); font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; font-weight: 800; margin-bottom: 24px; }
+  .end-msg {
+    font-size: 1.1rem; color: var(--text-mid);
+    line-height: 1.65; font-weight: 700;
+    background: rgba(201,184,232,0.12);
+    border-radius: 18px; padding: 22px 28px;
+    margin-bottom: 34px;
+    border: 1.5px solid rgba(200,180,240,0.25);
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .end-personal { font-style: normal; font-weight: 800; color: var(--text-dark); }
+  .end-quote {
+    font-family: 'Playfair Display', serif;
+    font-style: italic; font-size: 1.05rem;
+    color: var(--deep-lavender); font-weight: 400;
+    border-left: 3px solid var(--lavender);
+    padding-left: 16px; line-height: 1.7;
+  }
+  .end-attribution {
+    font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 800; color: var(--text-light);
+  }
+  .replay-btn {
+    background: linear-gradient(135deg, #b89ed4, #9b7fd4, #7aade8);
+    color: #fff; border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 900;
+    padding: 18px 54px; border-radius: 50px; cursor: none;
+    letter-spacing: 2px; text-transform: uppercase;
+    box-shadow: 0 8px 32px rgba(155,127,212,0.4), 0 4px 0 rgba(120,90,180,0.25);
+    transition: all 0.25s ease;
+  }
+  .replay-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 14px 48px rgba(155,127,212,0.55), 0 4px 0 rgba(120,90,180,0.25); }
+
+  /* ── CONFETTI ── */
+  .confetti-piece {
+    position: fixed; pointer-events: none; z-index: 9980;
+    border-radius: 50%;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity:1; }
+    100% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(0.5); opacity:0; }
+  }
+
+  /* ── SPARKLE BURST ── */
+  .sparkle-burst {
+    position: fixed; pointer-events: none; z-index: 9985;
+    font-size: 1.2rem;
+    animation: sparklePop 0.9s ease-out forwards;
+  }
+  @keyframes sparklePop {
+    0%   { transform: translate(0,0) scale(0) rotate(-20deg); opacity:1; }
+    60%  { transform: translate(var(--sx), var(--sy)) scale(1.3) rotate(10deg); opacity:1; }
+    100% { transform: translate(var(--sx2), var(--sy2)) scale(0.8) rotate(5deg); opacity:0; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- Floating particles -->
-  <div class="particles" id="particles"></div>
+<canvas id="bgCanvas"></canvas>
+<div id="cursor"></div>
+<div id="app">
 
-  <main>
-
-    <!-- ── HERO ── -->
-    <section class="hero" style="position:relative;">
-      <div class="hero-badge">✨ Olatoye Academy · Hackathon 2026</div>
-
-      <h1 class="hero-title">
-        <span class="gradient-text">Girl Power</span><br/>Coders
-      </h1>
-
-      <p class="hero-subtitle">
-        Three girls. One team. Infinite ideas.<br/>
-        Welcome to our Code Quest journey. 🚀
-      </p>
-
-      <div class="hero-team">
-        <div class="team-pill">👑 Elsie · Gravesend</div>
-        <div class="team-pill">⚡ Hannah · Middleton</div>
-        <div class="team-pill">🌟 Sophia · Middleton</div>
+  <!-- LOGIN SCREEN -->
+  <div class="screen active" id="screen-login">
+    <div class="petal-card login-card">
+      <div class="brand-badge">✨ Olatoye Academy ✨</div>
+      <h1 class="quiz-title">Girl Power Quiz</h1>
+      <p class="quiz-subtitle">Make-Up · Designer Brands · Cheerleading · Art</p>
+      <div class="topic-pills">
+        <div class="pill pill-fashion">👜 Designer Brands</div>
+        <div class="pill pill-makeup">💄 Make-Up</div>
+        <div class="pill pill-cheer">📣 Cheerleading</div>
+        <div class="pill pill-art">🎨 Art</div>
       </div>
 
-      <div class="scroll-hint">Scroll</div>
-    </section>
-
-    <div class="divider"></div>
-
-    <!-- ── ABOUT US ── -->
-    <section>
-      <p class="section-label">Who We Are</p>
-      <h2 class="section-title">Meet the Team</h2>
-      <p class="section-body">
-        We're the Girl Power Coders — building our first app together using AI, imagination, and a whole lot of creativity. No coding experience required. Just big ideas and even bigger ambitions.
-      </p>
-
-      <div class="cards">
-        <div class="card">
-          <div class="card-icon">👑</div>
-          <div class="card-title">Elsie</div>
-          <div class="card-text">Based in Gravesend. 
-            <!-- ✏️ Add Elsie's favourite things, hobbies, and fun facts here! -->
-            My favourite things are... <em style="opacity:0.4">[Elsie fills this in!]</em>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-icon">⚡</div>
-          <div class="card-title">Hannah</div>
-          <div class="card-text">Based in Middleton.
-            <!-- ✏️ Add Hannah's favourite things, hobbies, and fun facts here! -->
-            My favourite things are... <em style="opacity:0.4">[Hannah fills this in!]</em>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🌟</div>
-          <div class="card-title">Sophia</div>
-          <div class="card-text">Based in Middleton.
-            <!-- ✏️ Add Sophia's favourite things, hobbies, and fun facts here! -->
-            My favourite things are... <em style="opacity:0.4">[Sophia fills this in!]</em>
-          </div>
-        </div>
+      <div class="role-toggle">
+        <button class="role-btn active" id="rolePlayer" onclick="setRole('player')">🎮 I'm Playing</button>
+        <button class="role-btn" id="roleHost" onclick="setRole('host')">👑 I'm Hosting</button>
       </div>
-    </section>
 
-    <div class="divider"></div>
+      <div class="login-fields">
+        <div id="welcomePanel" class="welcome-panel"></div>
 
-    <!-- ── OUR PROJECT ── -->
-    <section>
-      <p class="section-label">What We're Building</p>
-      <h2 class="section-title">Our Quiz Game</h2>
-      <p class="section-body">
-        We're building an interactive quiz game that the whole family can play on hackathon day. Think you know your stuff? We'll see about that. 😏
-      </p>
+        <div class="field-wrap">
+          <label class="field-label">Your Name</label>
+          <input class="field-input" id="nameInput" type="text" placeholder="e.g. Elsie, Hannah, Sophia…" autocomplete="off" />
+        </div>
+        <div class="field-wrap" id="codeWrap">
+          <label class="field-label" id="codeLabel">Secret Code</label>
+          <input class="field-input" id="codeInput" type="password" placeholder="Enter your secret code" autocomplete="off" />
+        </div>
+        <div class="field-error" id="loginError"></div>
 
-      <div class="placeholder">
-        <span>🎮</span>
-        <!-- ✏️ The quiz game will be embedded or linked here once it's built! -->
-        Quiz game coming soon — watch this space!
+        <button class="login-btn" onclick="attemptLogin()">Let's Go! ✨</button>
       </div>
-    </section>
 
-    <div class="divider"></div>
+      <div class="q-count-hint">15 questions · Make-Up · Brands · Cheer · Art · Girls only 💜</div>
+    </div>
+  </div>
 
-    <!-- ── OUR FAVOURITES ── -->
-    <section>
-      <p class="section-label">All About Us</p>
-      <h2 class="section-title">Our Favourite Things</h2>
-      <p class="section-body">
-        From music to movies, food to fandoms — here's what makes us, us.
-      </p>
+  <!-- COUNTDOWN -->
+  <div class="screen" id="screen-countdown">
+    <div class="petal-card countdown-wrap">
+      <div class="countdown-eyebrow">get ready, gorgeous…</div>
+      <span class="countdown-num" id="countNum">3</span>
+    </div>
+  </div>
 
-      <div class="cards">
-        <div class="card">
-          <div class="card-icon">🎵</div>
-          <div class="card-title">Music</div>
-          <div class="card-text">
-            <!-- ✏️ Add the team's favourite music/artists here! -->
-            <em style="opacity:0.4">[Team fills this in together!]</em>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🎬</div>
-          <div class="card-title">Movies & Shows</div>
-          <div class="card-text">
-            <!-- ✏️ Add favourite movies/shows here! -->
-            <em style="opacity:0.4">[Team fills this in together!]</em>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🍕</div>
-          <div class="card-title">Food</div>
-          <div class="card-text">
-            <!-- ✏️ Add favourite foods here! -->
-            <em style="opacity:0.4">[Team fills this in together!]</em>
-          </div>
-        </div>
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <div class="progress-wrap">
+        <div class="progress-label" id="progressLabel">Question 1 / 15</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:6.6%"></div></div>
       </div>
-    </section>
+      <div class="score-badge">Score: <span id="scoreDisplay">0</span></div>
+    </div>
+    <div class="petal-card question-card">
+      <div class="topic-tag" id="topicTag"></div>
+      <div class="q-number" id="qNumber">Question 01</div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options-grid" id="optionsGrid"></div>
+      <div class="feedback-banner" id="feedbackBanner"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+    </div>
+  </div>
 
-    <div class="divider"></div>
+  <!-- HOST DASHBOARD -->
+  <div class="screen" id="screen-host">
+    <div class="host-dash-header">
+      <div>
+        <div class="host-crown-badge">👑 Gamesmaster View</div>
+        <div class="host-dash-name" id="hostDashName"></div>
+      </div>
+      <div class="host-dash-right">
+        <div class="host-q-counter" id="hostDashCount">Q 1 / 15</div>
+        <div class="host-code-pill">CODE: <span id="hostDashCode"></span></div>
+      </div>
+    </div>
+    <div class="petal-card host-question-card">
+      <div class="host-topic-tag tag-butterfly" id="hostTopicTag"></div>
+      <div class="host-q-num" id="hostQNum">Question 01</div>
+      <div class="host-q-text" id="hostQText"></div>
+      <div class="host-options-grid" id="hostOptionsGrid"></div>
+      <div class="host-answer-reveal" id="hostAnswerReveal">
+        <span>✅</span><span>Correct answer: <strong id="hostCorrectAnswer"></strong></span>
+      </div>
+    </div>
+    <div class="host-controls">
+      <div class="host-progress-bar"><div class="host-progress-fill" id="hostProgressFill" style="width:6.6%"></div></div>
+      <button class="host-reveal-btn" id="hostRevealBtn" onclick="hostRevealAnswer()">✨ Reveal Answer</button>
+      <button class="host-next-btn" id="hostNextBtn" onclick="hostNextQuestion()">Next Question →</button>
+    </div>
+  </div>
 
-    <!-- ── HACKATHON COUNTDOWN ── -->
-    <section style="text-align:center;">
-      <p class="section-label">The Big Day</p>
-      <h2 class="section-title">Hackathon · 4th April 2026</h2>
-      <p class="section-body" style="margin: 0 auto 2rem;">
-        Saturday evening. Girls vs Boys. Bragging rights on the line. We've got this. 💅
-      </p>
+  <!-- END SCREEN -->
+  <div class="screen" id="screen-end">
+    <div class="petal-card end-card">
+      <span class="trophy-icon" id="trophyIcon">🌸</span>
+      <div class="end-title" id="endTitle">You Did It!</div>
+      <div id="scoreSection">
+        <div class="end-score-big"><span id="finalScore">0</span><em>/15</em></div>
+        <div class="end-score-label">Total Score</div>
+      </div>
+      <div class="end-msg" id="endMsg"></div>
+      <button class="replay-btn" onclick="goToLogin()">🌸 Play Again</button>
+    </div>
+  </div>
 
-      <div id="countdown" style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap;"></div>
-    </section>
+  <!-- LEADERBOARD SCREEN -->
+  <div class="screen" id="screen-leaderboard">
+    <div class="petal-card end-card">
+      <span style="font-size:3rem;display:block;margin-bottom:10px;">🏆</span>
+      <div class="end-title">Girl Power Leaderboard</div>
+      <div style="font-size:0.78rem;letter-spacing:2px;color:var(--text-light);font-weight:800;margin-bottom:24px;text-transform:uppercase;">Top Scores — All Time</div>
+      <div id="leaderboardList" style="text-align:left;margin-bottom:28px;"></div>
+      <button class="replay-btn" onclick="goToLogin()">🌸 Play Again</button>
+    </div>
+  </div>
 
-  </main>
+</div>
 
-  <footer>
-    Built with 💗 by <strong>Girl Power Coders</strong> · Olatoye Academy Code Quest 2026
-  </footer>
+<script>
+/* ════════════════════════════════
+   BACKGROUND CANVAS
+════════════════════════════════ */
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; buildOrbs(); }
+window.addEventListener('resize', resize);
 
-  <script>
-    // ── Particles ──
-    const container = document.getElementById('particles');
-    const colors = ['#FF3D8A','#8B2FC9','#FFD166','#06D6A0'];
-    for (let i = 0; i < 30; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      const size = Math.random() * 6 + 2;
-      p.style.cssText = `
-        width:${size}px; height:${size}px;
-        left:${Math.random()*100}%;
-        background:${colors[Math.floor(Math.random()*colors.length)]};
-        animation-duration:${Math.random()*15+10}s;
-        animation-delay:${Math.random()*10}s;
-      `;
-      container.appendChild(p);
+// Vivid bright orbs — light purple, blue, lavender
+let orbs = [];
+function buildOrbs(){
+  orbs = [
+    {x:W*0.1,  y:H*0.2,  r:350, vx:0.18, vy:0.12,  hue:270, sat:80, l:82, a:0.55},
+    {x:W*0.85, y:H*0.5,  r:380, vx:-0.15,vy:0.18,  hue:200, sat:85, l:80, a:0.45},
+    {x:W*0.5,  y:H*0.05, r:250, vx:0.10, vy:-0.22, hue:285, sat:75, l:83, a:0.50},
+    {x:W*0.92, y:H*0.85, r:280, vx:-0.22,vy:0.10,  hue:250, sat:80, l:80, a:0.42},
+    {x:W*0.02, y:H*0.75, r:300, vx:0.14, vy:-0.14, hue:210, sat:80, l:82, a:0.45},
+    {x:W*0.55, y:H*0.92, r:220, vx:-0.10,vy:-0.18, hue:280, sat:78, l:81, a:0.50},
+    {x:W*0.3,  y:H*0.5,  r:200, vx:0.20, vy:0.15,  hue:195, sat:82, l:83, a:0.38},
+  ];
+}
+
+// BRIGHT vivid sparkles across the sky
+const sparkleChars = ['✦','✧','✩','⭑','★','✱','✲','❋','❊','✺','✸','✼'];
+const sparkles = Array.from({length:120}, () => ({
+  char: sparkleChars[Math.floor(Math.random()*sparkleChars.length)],
+  x: Math.random()*3000, y: Math.random()*2000,
+  size: 14 + Math.random()*28,
+  alpha: 0.6 + Math.random()*0.4,
+  speed: 0.08 + Math.random()*0.25,
+  twinkleSpeed: 0.03 + Math.random()*0.06,
+  twinklePhase: Math.random()*Math.PI*2,
+  hue: [270,285,200,210,260,195][Math.floor(Math.random()*6)],
+  sat: 75+Math.random()*25,
+  lit: 45+Math.random()*20,
+}));
+
+// Floating butterflies — big and bright
+const butterflies = Array.from({length:18}, () => ({
+  x: Math.random()*3000, y: Math.random()*2000,
+  size: 22 + Math.random()*28,
+  speed: 0.3 + Math.random()*0.6,
+  alpha: 0.65 + Math.random()*0.35,
+  wiggle: Math.random()*Math.PI*2,
+  wiggleSpeed: 0.025 + Math.random()*0.04,
+}));
+
+// Fashion icons floating in the background
+const fashionIcons = ['👗','👠','💄','👜','💅','🌸','💍','🎀','👒','🛍️','💋','🌺','💎','🌷'];
+const fashionFloaters = Array.from({length:22}, () => ({
+  icon: fashionIcons[Math.floor(Math.random()*fashionIcons.length)],
+  x: Math.random()*3000, y: Math.random()*2000,
+  size: 20 + Math.random()*24,
+  speed: 0.15 + Math.random()*0.35,
+  alpha: 0.55 + Math.random()*0.40,
+  wiggle: Math.random()*Math.PI*2,
+  wiggleSpeed: 0.015 + Math.random()*0.03,
+}));
+
+let T = 0;
+function draw(){
+  T += 0.016;
+
+  // Bright light purple-blue sky
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0,   '#f0e8ff');
+  bg.addColorStop(0.3, '#e8d5ff');
+  bg.addColorStop(0.6, '#dde8ff');
+  bg.addColorStop(1,   '#e0f0ff');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+  // Vivid bright orbs
+  orbs.forEach(o=>{
+    o.x += o.vx; o.y += o.vy;
+    if(o.x < -o.r*2) o.x = W+o.r; if(o.x > W+o.r*2) o.x = -o.r;
+    if(o.y < -o.r*2) o.y = H+o.r; if(o.y > H+o.r*2) o.y = -o.r;
+    const breathe = 1 + 0.1*Math.sin(T*0.5+o.hue*0.02);
+    const rr = o.r * breathe;
+    const g = ctx.createRadialGradient(o.x,o.y,0, o.x,o.y,rr);
+    g.addColorStop(0,   `hsla(${o.hue},${o.sat}%,${o.l}%,${o.a})`);
+    g.addColorStop(0.5, `hsla(${o.hue},${o.sat}%,${o.l}%,${o.a*0.5})`);
+    g.addColorStop(1,   `hsla(${o.hue},${o.sat}%,${o.l}%,0)`);
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(o.x,o.y,rr,0,Math.PI*2); ctx.fill();
+  });
+
+  // BRIGHT sparkle characters — vivid purple & blue
+  sparkles.forEach(s=>{
+    s.y -= s.speed;
+    if(s.y < -30) { s.y = H+30; s.x = Math.random()*W; }
+    s.twinklePhase += s.twinkleSpeed;
+    const a = s.alpha * (0.4 + 0.6*Math.abs(Math.sin(s.twinklePhase)));
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.fillStyle = `hsl(${s.hue},${s.sat}%,${s.lit}%)`;
+    ctx.shadowColor = `hsl(${s.hue},90%,60%)`;
+    ctx.shadowBlur = 10;
+    ctx.font = `bold ${s.size}px serif`;
+    ctx.fillText(s.char, s.x % W, s.y % H);
+    ctx.restore();
+  });
+
+  // Butterflies — vivid and clearly visible
+  butterflies.forEach(b=>{
+    b.x += b.speed;
+    b.wiggle += b.wiggleSpeed;
+    if(b.x > W+40) { b.x = -40; b.y = Math.random()*H; }
+    const wy = Math.sin(b.wiggle) * 18;
+    ctx.save();
+    ctx.globalAlpha = b.alpha;
+    ctx.font = `${b.size}px serif`;
+    ctx.fillText('🦋', b.x, b.y + wy);
+    ctx.restore();
+  });
+
+  // Fashion icons rising up
+  fashionFloaters.forEach(f=>{
+    f.y -= f.speed;
+    f.wiggle += f.wiggleSpeed;
+    if(f.y < -40) { f.y = H+40; f.x = Math.random()*W; }
+    const wx = Math.sin(f.wiggle) * 10;
+    ctx.save();
+    ctx.globalAlpha = f.alpha;
+    ctx.font = `${f.size}px serif`;
+    ctx.fillText(f.icon, f.x + wx, f.y);
+    ctx.restore();
+  });
+
+  requestAnimationFrame(draw);
+}
+resize(); draw();
+
+/* ════════════════════════════════
+   CUSTOM CURSOR
+════════════════════════════════ */
+const cursorEl = document.getElementById('cursor');
+const trailColours = ['rgba(201,184,232,','rgba(184,216,240,','rgba(226,213,248,'];
+const trailDots = [];
+for(let i=0;i<10;i++){
+  const d = document.createElement('div');
+  d.className = 'cursor-trail';
+  const size = 12 - i*0.8;
+  d.style.cssText = `width:${size}px;height:${size}px;background:${trailColours[i%3]}${0.35-i*0.03})`;
+  document.body.appendChild(d);
+  trailDots.push({el:d, x:0, y:0});
+}
+let mx=0,my=0;
+document.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; cursorEl.style.left=mx+'px'; cursorEl.style.top=my+'px'; });
+document.addEventListener('mousedown', ()=>cursorEl.classList.add('clicking'));
+document.addEventListener('mouseup', ()=>cursorEl.classList.remove('clicking'));
+(function animTrail(){
+  trailDots.forEach((d,i)=>{
+    const prev = i===0?{x:mx,y:my}:trailDots[i-1];
+    d.x += (prev.x - d.x)*0.35;
+    d.y += (prev.y - d.y)*0.35;
+    d.el.style.left = d.x+'px'; d.el.style.top = d.y+'px';
+  });
+  requestAnimationFrame(animTrail);
+})();
+
+/* ════════════════════════════════
+   CONFETTI + SPARKLE BURST
+════════════════════════════════ */
+const confettiColours = [
+  '#c9b8e8','#b8d8f0','#e2d5f8','#d4b8e8','#7ab8e8',
+  '#b89ed4','#9b7fd4','#e8c8f0','#a8c8e8','#f0d0e8'
+];
+function confettiBurst(x, y){
+  for(let i=0;i<28;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const size = 6 + Math.random()*10;
+    const angle = Math.random()*Math.PI*2;
+    const dist = 80 + Math.random()*160;
+    const cx = Math.cos(angle)*dist + (Math.random()-0.5)*60;
+    const cy = Math.sin(angle)*dist + (Math.random()-0.5)*60;
+    el.style.cssText = `
+      left:${x}px; top:${y}px;
+      width:${size}px; height:${size}px;
+      background:${confettiColours[Math.floor(Math.random()*confettiColours.length)]};
+      --cx:${cx}px; --cy:${cy}px; --cr:${Math.random()*720-360}deg;
+      animation-duration:${0.8+Math.random()*0.6}s;
+      border-radius:${Math.random()>0.5?'50%':'4px'};
+      opacity:1;
+    `;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 1500);
+  }
+  // sparkle burst
+  const sparks = ['✨','🌸','💜','⭐','🦋','💫','✦','🌷'];
+  for(let i=0;i<10;i++){
+    const el = document.createElement('div');
+    el.className = 'sparkle-burst';
+    const angle = (i/10)*Math.PI*2 + Math.random()*0.5;
+    const d1 = 60+Math.random()*80, d2 = 100+Math.random()*130;
+    el.textContent = sparks[Math.floor(Math.random()*sparks.length)];
+    el.style.cssText = `
+      left:${x}px; top:${y}px;
+      --sx:${Math.cos(angle)*d1}px; --sy:${Math.sin(angle)*d1-40}px;
+      --sx2:${Math.cos(angle)*d2}px; --sy2:${Math.sin(angle)*d2-80}px;
+      animation-duration:${0.7+Math.random()*0.4}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 1200);
+  }
+}
+
+/* ════════════════════════════════
+   AUTH / ROLES
+════════════════════════════════ */
+// Host credentials — girls team only
+const HOSTS = [
+  { name:'Elsie',  code:'elsie2026' },
+  { name:'Hannah', code:'hannah2026' },
+  { name:'Sophia', code:'sophia2026' },
+];
+
+let currentRole = 'player';
+let loggedInName = '';
+
+function setRole(role){
+  currentRole = role;
+  document.getElementById('rolePlayer').classList.toggle('active', role==='player');
+  document.getElementById('roleHost').classList.toggle('active', role==='host');
+  document.getElementById('codeLabel').textContent = role==='host' ? 'Host Password' : 'Secret Code';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('welcomePanel').className = 'welcome-panel';
+  document.getElementById('codeWrap').style.display = role==='host' ? 'block' : 'none';
+}
+setRole('player'); // init
+
+function attemptLogin(){
+  const name = document.getElementById('nameInput').value.trim();
+  const code = document.getElementById('codeInput').value.trim();
+  const errEl = document.getElementById('loginError');
+  const nameEl = document.getElementById('nameInput');
+  const codeEl = document.getElementById('codeInput');
+  errEl.textContent=''; nameEl.classList.remove('error'); codeEl.classList.remove('error');
+
+  if(!name){ nameEl.classList.add('error'); errEl.textContent='💜 Please enter your name!'; return; }
+
+  if(currentRole === 'host'){
+    const match = HOSTS.find(h => h.name.toLowerCase()===name.toLowerCase() && h.code===code);
+    if(!match){ codeEl.classList.add('error'); errEl.textContent='💜 Host credentials not recognised. Try again!'; return; }
+    loggedInName = match.name;
+    showHostDashboard();
+  } else {
+    loggedInName = name;
+    startCountdown();
+  }
+}
+
+document.addEventListener('keydown', e=>{ if(e.key==='Enter') attemptLogin(); });
+
+function goToLogin(){
+  showScreen('login');
+  document.getElementById('nameInput').value='';
+  document.getElementById('codeInput').value='';
+  document.getElementById('welcomePanel').className='welcome-panel';
+  document.getElementById('loginError').textContent='';
+  setRole('player');
+}
+
+/* ════════════════════════════════
+   SCREENS
+════════════════════════════════ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+
+/* ════════════════════════════════
+   COUNTDOWN
+════════════════════════════════ */
+function startCountdown(){
+  initQuiz(); showScreen('countdown');
+  let count = 3;
+  const el = document.getElementById('countNum');
+  const tick = () => {
+    el.style.animation='none'; el.offsetHeight;
+    el.style.animation='countPop 1s cubic-bezier(0.22,1,0.36,1)';
+    el.textContent = count===0 ? '✨ GO! ✨' : count;
+    if(count < 0){ showScreen('quiz'); loadQuestion(); return; }
+    count--; setTimeout(tick, 1000);
+  };
+  tick();
+}
+
+/* ════════════════════════════════
+   QUESTIONS
+════════════════════════════════ */
+const questions = [
+  // DESIGNER BRANDS
+  {topic:'fashion',topicLabel:'👜 Designer Brands',q:'Which designer brand is famous for the song "Chanel" written by Tyla?',opts:['Gucci','Louis Vuitton','Chanel','Prada'],ans:2},
+  {topic:'fashion',topicLabel:'👜 Designer Brands',q:'Which country is most famous for hosting the biggest fashion weeks in the world?',opts:['USA','France','Japan','Brazil'],ans:1},
+  {topic:'fashion',topicLabel:'👜 Designer Brands',q:'Coach is a famous designer brand known for making which type of accessory?',opts:['Shoes','Sunglasses','Handbags','Jewellery'],ans:2},
+  {topic:'fashion',topicLabel:'👜 Designer Brands',q:'What animal appears on the famous Lacoste designer brand logo?',opts:['Lion','Crocodile','Eagle','Tiger'],ans:1},
+  {topic:'fashion',topicLabel:'👜 Designer Brands',q:'Which city is home to the famous Chanel fashion house?',opts:['Milan','London','New York','Paris'],ans:3},
+  // MAKE-UP
+  {topic:'makeup',topicLabel:'💄 Make-Up',q:'What make-up product is used to make your eyelashes look longer and thicker?',opts:['Foundation','Mascara','Blush','Highlighter'],ans:1},
+  {topic:'makeup',topicLabel:'💄 Make-Up',q:'What is the name of the make-up used to even out your skin tone all over your face?',opts:['Concealer','Bronzer','Foundation','Setting powder'],ans:2},
+  {topic:'makeup',topicLabel:'💄 Make-Up',q:'Which make-up product gives your cheeks a rosy, flushed look?',opts:['Contour','Highlighter','Blush','Primer'],ans:2},
+  {topic:'makeup',topicLabel:'💄 Make-Up',q:'What is "concealer" used for?',opts:['To add colour to your lips','To hide spots and dark circles','To curl your lashes','To set your make-up'],ans:1},
+  {topic:'makeup',topicLabel:'💄 Make-Up',q:'What make-up tool is used to blend foundation smoothly into the skin?',opts:['Lip liner','Eyelash curler','Beauty blender sponge','Setting spray'],ans:2},
+  // CHEERLEADING
+  {topic:'cheer',topicLabel:'📣 Cheerleading',q:'What is the name of the cheerleader who is lifted and thrown into the air during a stunt?',opts:['The base','The spotter','The flyer','The captain'],ans:2},
+  {topic:'cheer',topicLabel:'📣 Cheerleading',q:'What are the colourful fluffy things that cheerleaders shake called?',opts:['Pompoms','Tassels','Ribbons','Batons'],ans:0},
+  {topic:'cheer',topicLabel:'📣 Cheerleading',q:'In cheerleading, what is the role of the "base"?',opts:['To lead the chants','To lift and support the flyer','To judge the routine','To count the music'],ans:1},
+  // ART
+  {topic:'art',topicLabel:'🎨 Art',q:'Which famous artist painted the Mona Lisa?',opts:['Michelangelo','Pablo Picasso','Leonardo da Vinci','Vincent van Gogh'],ans:2},
+  {topic:'art',topicLabel:'🎨 Art',q:'What are the three primary colours in art?',opts:['Red, green and blue','Red, yellow and blue','Pink, purple and orange','Black, white and grey'],ans:1},
+];
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+let shuffledQ, currentQ, score, answered;
+
+function initQuiz(){
+  shuffledQ = shuffle([...questions]);
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('scoreDisplay').textContent = 0;
+}
+
+/* ════════════════════════════════
+   QUIZ FLOW
+════════════════════════════════ */
+function loadQuestion(){
+  answered = false;
+  const q = shuffledQ[currentQ];
+  const idx = currentQ + 1;
+  const total = shuffledQ.length;
+
+  document.getElementById('progressLabel').textContent = `Question ${idx} / ${total}`;
+  document.getElementById('progressFill').style.width = (idx/total*100)+'%';
+  document.getElementById('qNumber').textContent = `Question ${String(idx).padStart(2,'0')}`;
+  document.getElementById('questionText').textContent = q.q;
+
+  const tag = document.getElementById('topicTag');
+  tag.textContent = q.topicLabel;
+  tag.className = 'topic-tag tag-' + q.topic;
+
+  const grid = document.getElementById('optionsGrid'); grid.innerHTML='';
+  ['A','B','C','D'].forEach((L,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<div class="option-letter">${L}</div><span>${q.opts[i]}</span>`;
+    btn.onclick = () => selectAnswer(i, btn);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('feedbackBanner').className = 'feedback-banner';
+  document.getElementById('nextBtn').className = 'next-btn';
+}
+
+function selectAnswer(chosen, btn){
+  if(answered) return; answered = true;
+  const q = shuffledQ[currentQ];
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  const fb = document.getElementById('feedbackBanner');
+  const nb = document.getElementById('nextBtn');
+
+  if(chosen === q.ans){
+    score++;
+    document.getElementById('scoreDisplay').textContent = score;
+    btn.classList.add('correct');
+    fb.innerHTML = '✨ Brilliant! Absolutely correct! 🌸';
+    fb.className = 'feedback-banner show right';
+    // confetti from button position
+    const rect = btn.getBoundingClientRect();
+    confettiBurst(rect.left + rect.width/2, rect.top + rect.height/2);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.option-btn')[q.ans].classList.add('reveal-correct');
+    fb.innerHTML = `🌷 Not quite! The answer was: <strong>${q.opts[q.ans]}</strong>`;
+    fb.className = 'feedback-banner show wrong-fb';
+  }
+
+  nb.textContent = currentQ < shuffledQ.length-1 ? 'Next Question →' : 'See My Results 🌸';
+  nb.className = 'next-btn show';
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ >= shuffledQ.length){ showEndScreen(); return; }
+  loadQuestion();
+}
+
+/* ════════════════════════════════
+   END SCREEN
+════════════════════════════════ */
+function showEndScreen(){
+  showScreen('end');
+  document.getElementById('scoreSection').style.display = 'block';
+  document.getElementById('finalScore').textContent = score;
+  const pct = score / shuffledQ.length;
+  const name = loggedInName;
+  let trophy, title, msg;
+
+  if(pct === 1){
+    trophy = '🏆✨';
+    title = 'Absolutely Perfect!';
+    msg = `${name} — 15 out of 15! Flawless. 🌸|||"You may not control all the events that happen to you, but you can decide not to be reduced by them."|||— Maya Angelou`;
+  } else if(pct >= 0.85){
+    trophy = '🌸';
+    title = 'Stunning Performance!';
+    msg = `${name} — ${score}/15! Nearly flawless — just breathtaking. 💜|||\u201cI am no bird; and no net ensnares me: I am a free human being with an independent will.\u201d|||— Charlotte Brontë, Jane Eyre`;
+  } else if(pct >= 0.70){
+    trophy = '🦋';
+    title = 'Beautiful Work!';
+    msg = `${name} — ${score}/15! You flew through this quiz! 🦋|||\u201cWe realise the importance of our voices only when we are silenced.\u201d|||— Malala Yousafzai`;
+  } else if(pct >= 0.50){
+    trophy = '💜';
+    title = 'Great Effort, Gorgeous!';
+    msg = `${name} — ${score}/15! More than halfway there — keep going! ✨|||\u201cI have learned over the years that when one\u2019s mind is made up, this diminishes fear.\u201d|||— Rosa Parks`;
+  } else if(pct >= 0.30){
+    trophy = '🌷';
+    title = 'You Showed Up!';
+    msg = `${name} — ${score}/15! Every question is a step forward. 🌷|||\u201cFailure is not the opposite of success, it\u2019s part of success.\u201d|||— Arianna Huffington`;
+  } else {
+    trophy = '🌸';
+    title = 'The Journey Starts Here!';
+    msg = `${name} — ${score}/15! This is just the beginning! 🌸|||\u201cWe know what we are, but know not what we may be.\u201d|||— William Shakespeare, Hamlet`;
+  }
+
+  document.getElementById('trophyIcon').textContent = trophy;
+  document.getElementById('endTitle').textContent = title;
+  const parts = msg.split('|||');
+  const personal = parts[0] || '';
+  const quoteLine = parts[1] || '';
+  const attribution = parts[2] || '';
+  document.getElementById('endMsg').innerHTML =
+    `<span class="end-personal">${personal}</span>` +
+    (quoteLine ? `<span class="end-quote">${quoteLine}</span><span class="end-attribution">${attribution}</span>` : '');
+
+  // Save score to Supabase
+  saveScore(loggedInName, score, shuffledQ.length);
+
+  // Add leaderboard button
+  const replayBtn = document.querySelector('#screen-end .replay-btn');
+  replayBtn.insertAdjacentHTML('beforebegin',
+    `<button class="replay-btn" style="margin-bottom:12px;background:linear-gradient(135deg,#a855f7,#7dd3fc);" onclick="showLeaderboard()">🏆 See Leaderboard</button><br>`
+  );
+
+  // big confetti celebration
+  setTimeout(()=>{
+    for(let i=0;i<6;i++){
+      setTimeout(()=>{
+        confettiBurst(window.innerWidth*0.3 + Math.random()*window.innerWidth*0.4, window.innerHeight*0.3 + Math.random()*200);
+      }, i*180);
     }
+  }, 400);
+}
 
-    // ── Countdown ──
-    function updateCountdown() {
-      const target = new Date('2026-04-04T18:30:00');
-      const now = new Date();
-      const diff = target - now;
+/* ════════════════════════════════
+   HOST DASHBOARD
+════════════════════════════════ */
+let hostQ, hostAnswered;
 
-      const el = document.getElementById('countdown');
-      if (diff <= 0) { el.innerHTML = '<div class="card" style="padding:1.5rem 2.5rem;font-size:1.5rem;">🎉 It\'s Hackathon Day!</div>'; return; }
+function showHostDashboard(){
+  shuffledQ = shuffle([...questions]);
+  hostQ = 0; hostAnswered = false;
+  document.getElementById('hostDashName').textContent = '👑 ' + loggedInName;
+  document.getElementById('hostDashCode').textContent = 'GIRLPOWER';
+  showScreen('host');
+  loadHostQuestion();
+}
 
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
+function loadHostQuestion(){
+  hostAnswered = false;
+  const q = shuffledQ[hostQ];
+  const idx = hostQ + 1;
+  const total = shuffledQ.length;
 
-      el.innerHTML = [['Days',d],['Hours',h],['Mins',m],['Secs',s]].map(([label,val]) => `
-        <div class="card" style="padding:1.5rem; min-width:100px; text-align:center;">
-          <div style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;color:var(--rose);">${String(val).padStart(2,'0')}</div>
-          <div style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:0.4rem;">${label}</div>
-        </div>`).join('');
+  document.getElementById('hostDashCount').textContent = `Q ${idx} / ${total}`;
+  document.getElementById('hostProgressFill').style.width = (idx/total*100)+'%';
+  document.getElementById('hostQNum').textContent = `Question ${String(idx).padStart(2,'0')}`;
+  document.getElementById('hostQText').textContent = q.q;
+
+  const tag = document.getElementById('hostTopicTag');
+  tag.textContent = q.topicLabel;
+  tag.className = 'host-topic-tag tag-' + q.topic;
+
+  const grid = document.getElementById('hostOptionsGrid'); grid.innerHTML='';
+  ['A','B','C','D'].forEach((L,i)=>{
+    const d = document.createElement('div');
+    d.className = 'host-option';
+    d.innerHTML = `<div class="host-opt-letter">${L}</div><span>${q.opts[i]}</span>`;
+    grid.appendChild(d);
+  });
+
+  document.getElementById('hostAnswerReveal').classList.remove('show');
+  document.getElementById('hostRevealBtn').style.display = 'block';
+}
+
+function hostRevealAnswer(){
+  const q = shuffledQ[hostQ];
+  document.getElementById('hostCorrectAnswer').textContent = q.opts[q.ans];
+  document.getElementById('hostAnswerReveal').classList.add('show');
+  document.getElementById('hostRevealBtn').style.display = 'none';
+  hostAnswered = true;
+  confettiBurst(window.innerWidth/2, window.innerHeight/2);
+}
+
+function hostNextQuestion(){
+  hostQ++;
+  if(hostQ >= shuffledQ.length){
+    // host wrap-up
+    showScreen('end');
+    document.getElementById('scoreSection').style.display = 'none';
+    document.getElementById('trophyIcon').textContent = '🎉';
+    document.getElementById('endTitle').textContent = "That's a Wrap!";
+    document.getElementById('endMsg').textContent = `Incredible hosting, ${loggedInName}! 👑 You guided everyone through all ${shuffledQ.length} questions beautifully — a true Gamesmaster. Girl Power for real! 🦋💜✨`;
+    confettiBurst(window.innerWidth/2, window.innerHeight/3);
+    return;
+  }
+  loadHostQuestion();
+}
+
+/* ════════════════════════════════
+   SUPABASE — Save Scores & Leaderboard
+════════════════════════════════ */
+const SUPABASE_URL = 'https://jrjmkqzjloikdhhatrwa.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impyam1rcXpqbG9pa2RoaGF0cndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwODAyOTEsImV4cCI6MjA5MDY1NjI5MX0.0TYBifEH3uSUMBnrF_Gtu9PJ9KLv20XXZYI_UQ0hf8s';
+
+async function saveScore(playerName, score, total) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/quiz_scores`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ player_name: playerName, score, total_questions: total })
+    });
+  } catch(e) {
+    console.log('Score save failed:', e);
+  }
+}
+
+async function showLeaderboard() {
+  showScreen('leaderboard');
+  const list = document.getElementById('leaderboardList');
+  list.innerHTML = '<div style="text-align:center;color:var(--text-light);padding:20px;">Loading scores… 💜</div>';
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/quiz_scores?select=player_name,score,total_questions,percentage,played_at&order=score.desc,played_at.desc&limit=10`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const scores = await res.json();
+    if (!scores.length) {
+      list.innerHTML = '<div style="text-align:center;color:var(--text-light);padding:20px;">No scores yet — be the first! 🌸</div>';
+      return;
     }
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  </script>
+    const medals = ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+    list.innerHTML = scores.map((s,i) => `
+      <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;margin-bottom:8px;
+        background:${i===0?'rgba(251,191,36,0.12)':'rgba(201,184,232,0.1)'};
+        border:1.5px solid ${i===0?'rgba(251,191,36,0.3)':'rgba(200,180,240,0.2)'};
+        border-radius:14px;">
+        <span style="font-size:1.4rem;">${medals[i]||'⭐'}</span>
+        <div style="flex:1">
+          <div style="font-weight:900;color:var(--text-dark);font-size:1rem;">${s.player_name}</div>
+          <div style="font-size:0.72rem;color:var(--text-light);letter-spacing:1px;text-transform:uppercase;font-weight:700;">
+            ${new Date(s.played_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--mid-purple);">${s.score}/${s.total_questions}</div>
+          <div style="font-size:0.72rem;color:var(--text-light);font-weight:800;">${s.percentage}%</div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-light);padding:20px;">Couldn\'t load scores right now 🌷</div>';
+  }
+}
 
+initQuiz();
+</script>
 </body>
 </html>
