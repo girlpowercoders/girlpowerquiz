@@ -207,7 +207,11 @@ body{font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;cursor:n
         </div>
         <div style="margin-bottom:14px;text-align:left;display:none;" id="hostPassWrap">
           <label class="field-label">Host Password</label>
-          <input class="field-input" id="hostPassInput" type="password" placeholder="Enter the shared host password"/>
+          <div style="position:relative;">
+            <input class="field-input" id="hostPassInput" type="password" placeholder="Enter the shared host password" style="padding-right:50px;"/>
+            <button onclick="togglePassVis()" type="button" id="eyeBtn" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:none;font-size:1.2rem;color:var(--text-light);padding:4px;transition:color 0.2s;" title="Show/hide password">👁️</button>
+          </div>
+        </div>
         </div>
         <div class="field-error" id="loginError"></div>
         <button class="btn btn-purple" style="margin-top:8px;" onclick="attemptLogin()">Let's Go! ✨</button>
@@ -428,6 +432,13 @@ function showToast(msg){const t=document.getElementById('statusToast');t.textCon
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');}
 
 /* ══ LOGIN ══ */
+function togglePassVis(){
+  const input=document.getElementById('hostPassInput');
+  const btn=document.getElementById('eyeBtn');
+  if(input.type==='password'){input.type='text';btn.textContent='🙈';}
+  else{input.type='password';btn.textContent='👁️';}
+}
+
 function setRole(role){
   myRole=role;
   document.getElementById('rolePlayer').classList.toggle('active',role==='player');
