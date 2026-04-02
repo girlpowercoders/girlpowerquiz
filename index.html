@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Girl Power Coders ⚡</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --rose:    #FF3D8A;
+      --violet:  #8B2FC9;
+      --gold:    #FFD166;
+      --mint:    #06D6A0;
+      --deep:    #0D0618;
+      --surface: #160D2B;
+      --glass:   rgba(255,255,255,0.06);
+      --border:  rgba(255,61,138,0.25);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--deep);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(139,47,201,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(255,61,138,0.30) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(6,214,160,0.08) 0%, transparent 70%);
+      animation: pulse 8s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.7; }
+      to   { opacity: 1; }
+    }
+
+    /* ── Floating particles ── */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float linear infinite;
+      opacity: 0;
+    }
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    /* ── Layout ── */
+    main { position: relative; z-index: 1; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.4rem 1.2rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      backdrop-filter: blur(8px);
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      animation: fadeUp 0.9s ease 0.2s both;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, var(--rose), var(--violet), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      max-width: 540px;
+      line-height: 1.7;
+      animation: fadeUp 0.9s ease 0.35s both;
+    }
+
+    .hero-team {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.9s ease 0.5s both;
+    }
+
+    .team-pill {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      border-radius: 100px;
+      padding: 0.5rem 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .team-pill:hover {
+      transform: translateY(-3px);
+      border-color: var(--rose);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ── Sections ── */
+    section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-body {
+      color: rgba(255,255,255,0.6);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      max-width: 600px;
+    }
+
+    /* ── Cards grid ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,61,138,0.06), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover { transform: translateY(-6px); border-color: var(--rose); box-shadow: 0 20px 60px rgba(255,61,138,0.15); }
+    .card:hover::before { opacity: 1; }
+
+    .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .card-text { color: rgba(255,255,255,0.55); font-size: 0.95rem; line-height: 1.7; }
+
+    /* ── Placeholder blocks ── */
+    .placeholder {
+      border: 2px dashed rgba(255,61,138,0.3);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.95rem;
+      margin-top: 2rem;
+    }
+    .placeholder span { display: block; font-size: 2rem; margin-bottom: 0.75rem; }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin: 0 2rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: rgba(255,255,255,0.2);
+      font-size: 0.85rem;
+      position: relative;
+      z-index: 1;
+    }
+    footer strong { color: var(--rose); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp   { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- Floating particles -->
+  <div class="particles" id="particles"></div>
+
+  <main>
+
+    <!-- ── HERO ── -->
+    <section class="hero" style="position:relative;">
+      <div class="hero-badge">✨ Olatoye Academy · Hackathon 2026</div>
+
+      <h1 class="hero-title">
+        <span class="gradient-text">Girl Power</span><br/>Coders
+      </h1>
+
+      <p class="hero-subtitle">
+        Three girls. One team. Infinite ideas.<br/>
+        Welcome to our Code Quest journey. 🚀
+      </p>
+
+      <div class="hero-team">
+        <div class="team-pill">👑 Elsie · Gravesend</div>
+        <div class="team-pill">⚡ Hannah · Middleton</div>
+        <div class="team-pill">🌟 Sophia · Middleton</div>
+      </div>
+
+      <div class="scroll-hint">Scroll</div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── ABOUT US ── -->
+    <section>
+      <p class="section-label">Who We Are</p>
+      <h2 class="section-title">Meet the Team</h2>
+      <p class="section-body">
+        We're the Girl Power Coders — building our first app together using AI, imagination, and a whole lot of creativity. No coding experience required. Just big ideas and even bigger ambitions.
+      </p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">👑</div>
+          <div class="card-title">Elsie</div>
+          <div class="card-text">Based in Gravesend. 
+            <!-- ✏️ Add Elsie's favourite things, hobbies, and fun facts here! -->
+            My favourite things are... <em style="opacity:0.4">[Elsie fills this in!]</em>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Hannah</div>
+          <div class="card-text">Based in Middleton.
+            <!-- ✏️ Add Hannah's favourite things, hobbies, and fun facts here! -->
+            My favourite things are... <em style="opacity:0.4">[Hannah fills this in!]</em>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌟</div>
+          <div class="card-title">Sophia</div>
+          <div class="card-text">Based in Middleton.
+            <!-- ✏️ Add Sophia's favourite things, hobbies, and fun facts here! -->
+            My favourite things are... <em style="opacity:0.4">[Sophia fills this in!]</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── OUR PROJECT ── -->
+    <section>
+      <p class="section-label">What We're Building</p>
+      <h2 class="section-title">Our Quiz Game</h2>
+      <p class="section-body">
+        We're building an interactive quiz game that the whole family can play on hackathon day. Think you know your stuff? We'll see about that. 😏
+      </p>
+
+      <div class="placeholder">
+        <span>🎮</span>
+        <!-- ✏️ The quiz game will be embedded or linked here once it's built! -->
+        Quiz game coming soon — watch this space!
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── OUR FAVOURITES ── -->
+    <section>
+      <p class="section-label">All About Us</p>
+      <h2 class="section-title">Our Favourite Things</h2>
+      <p class="section-body">
+        From music to movies, food to fandoms — here's what makes us, us.
+      </p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">🎵</div>
+          <div class="card-title">Music</div>
+          <div class="card-text">
+            <!-- ✏️ Add the team's favourite music/artists here! -->
+            <em style="opacity:0.4">[Team fills this in together!]</em>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎬</div>
+          <div class="card-title">Movies & Shows</div>
+          <div class="card-text">
+            <!-- ✏️ Add favourite movies/shows here! -->
+            <em style="opacity:0.4">[Team fills this in together!]</em>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🍕</div>
+          <div class="card-title">Food</div>
+          <div class="card-text">
+            <!-- ✏️ Add favourite foods here! -->
+            <em style="opacity:0.4">[Team fills this in together!]</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── HACKATHON COUNTDOWN ── -->
+    <section style="text-align:center;">
+      <p class="section-label">The Big Day</p>
+      <h2 class="section-title">Hackathon · 4th April 2026</h2>
+      <p class="section-body" style="margin: 0 auto 2rem;">
+        Saturday evening. Girls vs Boys. Bragging rights on the line. We've got this. 💅
+      </p>
+
+      <div id="countdown" style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap;"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    Built with 💗 by <strong>Girl Power Coders</strong> · Olatoye Academy Code Quest 2026
+  </footer>
+
+  <script>
+    // ── Particles ──
+    const container = document.getElementById('particles');
+    const colors = ['#FF3D8A','#8B2FC9','#FFD166','#06D6A0'];
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 6 + 2;
+      p.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*100}%;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        animation-duration:${Math.random()*15+10}s;
+        animation-delay:${Math.random()*10}s;
+      `;
+      container.appendChild(p);
+    }
+
+    // ── Countdown ──
+    function updateCountdown() {
+      const target = new Date('2026-04-04T18:30:00');
+      const now = new Date();
+      const diff = target - now;
+
+      const el = document.getElementById('countdown');
+      if (diff <= 0) { el.innerHTML = '<div class="card" style="padding:1.5rem 2.5rem;font-size:1.5rem;">🎉 It\'s Hackathon Day!</div>'; return; }
+
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+
+      el.innerHTML = [['Days',d],['Hours',h],['Mins',m],['Secs',s]].map(([label,val]) => `
+        <div class="card" style="padding:1.5rem; min-width:100px; text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;color:var(--rose);">${String(val).padStart(2,'0')}</div>
+          <div style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:0.4rem;">${label}</div>
+        </div>`).join('');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+
+</body>
+</html>
