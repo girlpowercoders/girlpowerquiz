@@ -222,26 +222,26 @@ body{font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;cursor:n
 
   <!-- HOST LOBBY -->
   <div class="screen" id="screen-host-lobby">
-    <div class="card lobby-card">
-      <div class="eyebrow" style="margin-bottom:6px;">👑 Gamesmaster — Share this code with the players!</div>
-      <div class="game-code-display" id="lobbyCode">----</div>
-      <p class="subtext" style="margin-bottom:18px;">Players go to <strong style="color:var(--deep-purple);">girlpowercoders.github.io/girlpowerquiz</strong></p>
-      <div style="font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--text-light);font-weight:800;margin-bottom:10px;">Players joined</div>
-      <div class="players-grid" id="hostLobbyPlayers"></div>
-      <div class="waiting-pulse" style="margin-bottom:26px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Waiting for players…</span></div>
+    <div class="card" style="padding:32px 36px;text-align:center;">
+      <div class="eyebrow" style="margin-bottom:4px;">👑 Gamesmaster — Share this code!</div>
+      <div class="game-code-display" id="lobbyCode" style="font-size:clamp(2.4rem,8vw,4rem);margin:8px 0 4px;letter-spacing:10px;">----</div>
+      <p class="subtext" style="font-size:0.82rem;margin-bottom:14px;">Players go to <strong style="color:var(--deep-purple);">girlpowercoders.github.io/girlpowerquiz</strong></p>
+      <div style="font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--text-light);font-weight:800;margin-bottom:8px;">Players joined</div>
+      <div class="players-grid" id="hostLobbyPlayers" style="margin:0 0 12px;min-height:44px;"></div>
+      <div class="waiting-pulse" style="margin-bottom:18px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Waiting for players…</span></div>
       <button class="btn btn-green" onclick="hostStartGame()">🚀 Everyone's in — Start!</button>
     </div>
   </div>
 
   <!-- PLAYER LOBBY -->
   <div class="screen" id="screen-player-lobby">
-    <div class="card lobby-card">
-      <div class="eyebrow" style="margin-bottom:8px;">💜 You're in the lobby!</div>
-      <h2 class="page-title" style="font-size:2rem;margin-bottom:6px;" id="playerLobbyName"></h2>
-      <p class="subtext" style="margin-bottom:22px;">Game: <strong id="playerLobbyCode" style="color:var(--deep-purple);letter-spacing:3px;"></strong></p>
-      <div style="font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--text-light);font-weight:800;margin-bottom:10px;">Who's playing</div>
-      <div class="players-grid" id="playerLobbyPlayers"></div>
-      <div class="waiting-pulse" style="margin-top:18px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Waiting for the host to start…</span></div>
+    <div class="card" style="padding:32px 36px;text-align:center;">
+      <div class="eyebrow" style="margin-bottom:6px;">💜 You're in the lobby!</div>
+      <h2 class="page-title" style="font-size:clamp(1.6rem,5vw,2.2rem);margin-bottom:4px;" id="playerLobbyName"></h2>
+      <p class="subtext" style="font-size:0.88rem;margin-bottom:18px;">Game code: <strong id="playerLobbyCode" style="color:var(--deep-purple);letter-spacing:3px;"></strong></p>
+      <div style="font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--text-light);font-weight:800;margin-bottom:8px;">Who's playing</div>
+      <div class="players-grid" id="playerLobbyPlayers" style="margin:0 0 16px;min-height:44px;"></div>
+      <div class="waiting-pulse"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Waiting for the host to start…</span></div>
     </div>
   </div>
 
