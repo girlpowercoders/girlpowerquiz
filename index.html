@@ -207,7 +207,7 @@ body{font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;cursor:n
         </div>
         <div style="margin-bottom:14px;text-align:left;display:none;" id="hostPassWrap">
           <label class="field-label">Host Password</label>
-          <input class="field-input" id="hostPassInput" type="password" placeholder="Enter your host password"/>
+          <input class="field-input" id="hostPassInput" type="password" placeholder="Enter the shared host password"/>
         </div>
         <div class="field-error" id="loginError"></div>
         <button class="btn btn-purple" style="margin-top:8px;" onclick="attemptLogin()">Let's Go! ✨</button>
@@ -343,7 +343,7 @@ function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.fl
 /* ══ STATE ══ */
 let myName='',myRole='player',gameCode='',myScore=0,myAnswer=null;
 let timerInterval=null,timerSeconds=15,gameSubscription=null,gameQuestions=[],isRevealed=false;
-const HOST_PASSWORDS={Elsie:'elsie2026',Hannah:'hannah2026',Sophia:'sophia2026'};
+const HOST_PASSWORD='girlpower2026';
 
 /* ══ BACKGROUND ══ */
 const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');
@@ -446,8 +446,7 @@ async function attemptLogin(){
   myName=name;
   if(myRole==='host'){
     const pass=document.getElementById('hostPassInput').value.trim();
-    const expected=HOST_PASSWORDS[name];
-    if(!expected||pass!==expected){document.getElementById('hostPassInput').classList.add('error');errEl.textContent='💜 Host credentials not recognised!';return;}
+    if(pass!==HOST_PASSWORD){document.getElementById('hostPassInput').classList.add('error');errEl.textContent='💜 Wrong password — ask Uncle B!';return;}
     await createHostGame();
   } else {
     const code=document.getElementById('codeInput').value.trim().toUpperCase();
