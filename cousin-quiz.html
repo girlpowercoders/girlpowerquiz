@@ -734,464 +734,476 @@ h1.qtitle{font-family:'Pacifico',cursive;font-size:clamp(2rem,7vw,3.2rem);margin
 </div>
 
 <script>
-// ══ QUESTIONS ══
-const ALL_QS = [
-  // ELSIE — cheerleading
-  {q:"What is Elsie's favourite colour?", a:"Purple", opts:["Pink","Purple","Blue","Green"],
-   hint:"Think about what colour Elsie loves on everything — her room, her outfits, her iPad case! 💜"},
-  {q:"What tech gadget does Elsie absolutely love?", a:"Her iPad", opts:["Her Phone","Her iPad","A Laptop","A Nintendo Switch"],
-   hint:"It's a flat screen device made by Apple that she carries everywhere! 📱"},
-  {q:"Which activity is Elsie most passionate about?", a:"Cheerleading", opts:["Swimming","Gymnastics","Cheerleading","Dancing"],
-   hint:"Think pom-poms, stunts and chanting! She loves being on a squad! 🎀"},
-  {q:"What is a 'High-V' in cheerleading?", a:"Arms raised in a V shape above the head", opts:["A kick above the waist","Arms raised in a V shape above the head","A jump where both feet leave the floor","A spin move"],
-   hint:"Think of the letter V — where would your arms go? ✌️"},
-  {q:"What is a 'toe touch' jump in cheerleading?", a:"A jump where legs go out wide and arms reach the toes", opts:["A kick to the nose","Touching your toes standing up","A jump where legs go out wide and arms reach the toes","A cartwheel move"],
-   hint:"In this jump your legs fly out sideways like a straddle — it looks like a big X in the air! 🤸‍♀️"},
-  {q:"In cheerleading what is a 'Liberty'?", a:"A skill where one foot is held up by the team", opts:["A backflip","A skill where one foot is held up by the team","A cartwheel to the side","A forward roll"],
-   hint:"Riri says: think of the Statue of Liberty — one thing raised up high! 🗽"},
-  {q:"What does a 'base' do in a cheerleading stunt?", a:"Holds and supports the flyer", opts:["Jumps the highest","Holds and supports the flyer","Leads the chant","Does the back walkover"],
-   hint:"The base is like the foundation of a building — they hold everyone else up! 💪"},
-  {q:"What creative hobby does Elsie love?", a:"Art", opts:["Singing","Art","Cooking","Writing"],
-   hint:"Think pencils, paintbrushes and sketchbooks! 🎨"},
-  {q:"When is Elsie's birthday?", a:"23rd September", opts:["18th May","22nd September","23rd September","14th October"],
-   hint:"It's just ONE day after another cousin's birthday in September! 🎂"},
-  {q:"What year was Elsie born?", a:"2016", opts:["2013","2014","2015","2016"],
-   hint:"Elsie is the youngest of the three cousins — she was born last! 👶"},
+/* SUPABASE */
+const SB_URL = 'https://jrjmkqzjloikdhhatrwa.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impyam1rcXpqbG9pa2RoaGF0cndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwODAyOTEsImV4cCI6MjA5MDY1NjI5MX0.0TYBifEH3uSUMBnrF_Gtu9PJ9KLv20XXZYI_UQ0hf8s';
+const db = supabase.createClient(SB_URL, SB_KEY);
+const HOST_PASS = 'girlpower2026';
+const GAME_CODE = 'QUIZ';
+const TOTAL = 10;
 
-  // SOPHIA — poet
-  {q:"What is Sophia's favourite building toy?", a:"LEGO", opts:["Duplo","Playmobil","LEGO","K'Nex"],
-   hint:"Think colourful plastic bricks that click together to build anything you can imagine! 🧱"},
-  {q:"Which sport does Sophia love?", a:"Gymnastics", opts:["Cheerleading","Gymnastics","Swimming","Dance"],
-   hint:"Think cartwheels, backflips and balance beams! 🤸‍♀️"},
-  {q:"Sophia loves writing and performing what art form?", a:"Poetry", opts:["Songs","Stories","Poetry","Plays"],
-   hint:"It often rhymes and has rhythm — she performs it out loud! 🪶"},
-  {q:"What is it called when a poem has lines that end with the same sound?", a:"Rhyme", opts:["Rhythm","Rhyme","Alliteration","Verse"],
-   hint:"Think 'cat sat on the mat' — the ending sounds match! 🐱"},
-  {q:"What do we call one section or 'chunk' of lines in a poem?", a:"A stanza", opts:["A chapter","A paragraph","A stanza","A chorus"],
-   hint:"In a song it would be called a verse — in poetry it has a different name! 📖"},
-  {q:"What poetic technique repeats the same starting sound in words?", a:"Alliteration", opts:["Rhyme","Metaphor","Alliteration","Simile"],
-   hint:"'Sally sells seashells' — notice how lots of words start with the same letter? 🐚"},
-  {q:"A 'simile' in poetry compares two things using which words?", a:"Like or as", opts:["And or but","Like or as","Because or so","With or by"],
-   hint:"'She ran LIKE the wind' or 'fast AS lightning' — what little words make those comparisons? ⚡"},
-  {q:"What instrument does Sophia play?", a:"Piano", opts:["Guitar","Violin","Piano","Drums"],
-   hint:"It has black and white keys and you play it with your fingers! 🎹"},
-  {q:"When is Sophia's birthday?", a:"22nd September", opts:["18th May","22nd September","23rd September","1st October"],
-   hint:"It's in September — one day BEFORE another cousin's birthday! 🎂"},
-  {q:"What year was Sophia born?", a:"2015", opts:["2013","2014","2015","2016"],
-   hint:"Sophia is the middle child age-wise — born between the oldest and youngest! 📅"},
+/* STATE */
+let playerName = '', mode = 'player', myScore = 0, myAns = null;
+let gCode = '', gQs = [], isRevealed = false, hintUsed = false;
+let timerSec = 15, timerInt = null, autoInt = null, sub = null;
 
-  // HANNAH — drawing
-  {q:"What creative hobby does Hannah enjoy?", a:"Art & Drawing", opts:["Poetry","Coding","Art & Drawing","Singing"],
-   hint:"Think pencils, sketchbooks and paintbrushes — she loves making pictures! 🎨"},
-  {q:"Which sport does Hannah love that takes place on ice?", a:"Ice-skating", opts:["Ice Hockey","Curling","Ice-skating","Skiing"],
-   hint:"You wear special boots with blades and glide across a frozen rink! ⛸️"},
-  {q:"Hannah loves splashing about — which activity?", a:"Swimming", opts:["Surfing","Swimming","Diving","Water Polo"],
-   hint:"Goggles, a swimming cap and lanes in a pool! 🏊‍♀️"},
-  {q:"When drawing a portrait, where on the head do the eyes sit?", a:"Halfway down the head", opts:["Near the very top","Near the chin","Halfway down the head","One third from the top"],
-   hint:"Most people draw eyes too high! Try measuring your own face — your eyes are actually in the middle! 👁️"},
-  {q:"What are the three PRIMARY colours in art?", a:"Red, Yellow and Blue", opts:["Red, Green and Blue","Red, Yellow and Blue","Pink, Purple and Orange","Black, White and Grey"],
-   hint:"You can mix these three colours together to make almost every other colour! 🎨"},
-  {q:"What drawing technique makes objects look 3D by adding dark areas?", a:"Shading", opts:["Colouring","Shading","Outlining","Tracing"],
-   hint:"Light comes from one direction — the opposite side gets darker. This technique creates depth! 🌑"},
-  {q:"What shape is the best foundation for drawing a human head?", a:"An oval / egg shape", opts:["A perfect circle","A square","An oval / egg shape","A diamond"],
-   hint:"Think of an egg standing upright — slightly wider at the top, narrower at the chin! 🥚"},
-  {q:"When is Hannah's birthday?", a:"18th May", opts:["18th May","22nd September","23rd September","30th June"],
-   hint:"Hannah's birthday is NOT in September like the others — it's in a spring month! 🌸"},
-  {q:"What year was Hannah born?", a:"2014", opts:["2013","2014","2015","2016"],
-   hint:"Hannah is the OLDEST of the three cousins! 👑"},
-  {q:"Hannah loves being outdoors — what does she love doing?", a:"Playing outside", opts:["Reading","Playing outside","Gardening","Cycling"],
-   hint:"No screens, just fresh air, running around and having fun! 🌳"},
+function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
 
-  // MIXED
-  {q:"Who is the OLDEST of the three cousins?", a:"Hannah", opts:["Elsie","Sophia","Hannah","They're the same age"],
-   hint:"Think about who was born in the earliest year! 🎂"},
-  {q:"Who is the YOUNGEST of the three cousins?", a:"Elsie", opts:["Elsie","Sophia","Hannah","They're all the same age"],
-   hint:"Think about who was born in the most recent year! 👶"},
-  {q:"Which TWO cousins have birthdays in September?", a:"Sophia & Elsie", opts:["Hannah & Elsie","Sophia & Hannah","Sophia & Elsie","All three of them"],
-   hint:"Their birthdays are only one day apart — both in the same month! 🗓️"},
-  {q:"How many days apart are Sophia's and Elsie's birthdays?", a:"1 day apart", opts:["Same day","1 day apart","1 week apart","2 days apart"],
-   hint:"Sophia is the 22nd and Elsie is the 23rd — count the gap! 📅"},
-  {q:"Which cousin loves BOTH art AND gymnastics?", a:"Hannah", opts:["Elsie","Sophia","Hannah","All of them"],
-   hint:"One cousin loves being creative AND being athletic — think about which cousin does both! 🤸‍♀️🎨"},
-];
-
-/* ══ SUPABASE ══ */
-const SB_URL='https://jrjmkqzjloikdhhatrwa.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impyam1rcXpqbG9pa2RoaGF0cndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwODAyOTEsImV4cCI6MjA5MDY1NjI5MX0.0TYBifEH3uSUMBnrF_Gtu9PJ9KLv20XXZYI_UQ0hf8s';
-const db=supabase.createClient(SB_URL,SB_KEY);
-const HOST_PASS='girlpower2026';
-const GAME_CODE='QUIZ';
-
-/* ══ STATE ══ */
-let playerName='',mode='player',myScore=0,myAns=null,gCode='',gQs=[];
-let shuffledQs=[],curQ=0,score=0,answered=false;
-let timerSec=15,timerInt=null,autoInt=null,sub=null,isRevealed=false;
-const TOTAL=10;
-
-function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
-
-/* ══ SCREEN HELPER ══ */
-function showScreen(id){
+/* SCREEN HELPER */
+function showScreen(id) {
   ['welcome','player-join','host-login','host-lobby','player-lobby',
-   'host-quiz','countdown','quiz','result','leaderboard'].forEach(s=>{
-    const el=document.getElementById('screen-'+s);
-    if(el) el.style.display='none';
+   'host-quiz','countdown','quiz','result','leaderboard'].forEach(function(s) {
+    var el = document.getElementById('screen-' + s);
+    if (el) el.style.display = 'none';
   });
-  const target=document.getElementById('screen-'+id);
-  if(target) target.style.display='block';
+  var target = document.getElementById('screen-' + id);
+  if (target) target.style.display = 'block';
 }
 
-/* ══ MODE SELECT ══ */
-let selMode='player';
-function pickMode(m){
-  selMode=m;
-  document.getElementById('mc-player').classList.toggle('selected',m==='player');
-  document.getElementById('mc-host').classList.toggle('selected',m==='host');
+/* MODE SELECT */
+var selMode = 'player';
+function pickMode(m) {
+  selMode = m;
+  document.getElementById('mc-player').classList.toggle('selected', m === 'player');
+  document.getElementById('mc-host').classList.toggle('selected', m === 'host');
 }
-function goToDetails(){
-  if(selMode==='player') showScreen('player-join');
+function goToDetails() {
+  if (selMode === 'player') showScreen('player-join');
   else showScreen('host-login');
 }
 
-/* ══ EYE TOGGLE ══ */
-function toggleEye(){
-  const i=document.getElementById('h-pass'),b=document.getElementById('eyeBtn');
-  i.type=i.type==='password'?'text':'password';
-  b.textContent=i.type==='password'?'👁️':'🙈';
+/* EYE TOGGLE */
+function toggleEye() {
+  var i = document.getElementById('h-pass');
+  var b = document.getElementById('eyeBtn');
+  i.type = i.type === 'password' ? 'text' : 'password';
+  b.textContent = i.type === 'password' ? '\u{1F441}\uFE0F' : '\uD83D\uDE48';
 }
 
-/* ══ HOST LOGIN ══ */
-async function hostLogin(){
-  const name=document.getElementById('h-name').value.trim();
-  const pass=document.getElementById('h-pass').value.trim();
-  const err=document.getElementById('h-err');
-  err.textContent='';
-  if(!name){document.getElementById('h-name').classList.add('err');err.textContent='Please enter your name!';return;}
-  if(pass!==HOST_PASS){document.getElementById('h-pass').classList.add('err');err.textContent='Wrong password!';return;}
-  playerName=name;mode='host';gCode=GAME_CODE;
-  gQs=shuffle(ALL_QS).slice(0,TOTAL);
-  await db.from('games').delete().eq('code',gCode);
-  const {error}=await db.from('games').insert({
-    code:gCode,status:'lobby',current_question:0,
-    questions:gQs,scores:{},
-    players:{[playerName]:{j:Date.now()}},revealed:false
+/* HOST LOGIN */
+async function hostLogin() {
+  var name = document.getElementById('h-name').value.trim();
+  var pass = document.getElementById('h-pass').value.trim();
+  var err = document.getElementById('h-err');
+  err.textContent = '';
+  if (!name) { document.getElementById('h-name').classList.add('err'); err.textContent = 'Please enter your name!'; return; }
+  if (pass !== HOST_PASS) { document.getElementById('h-pass').classList.add('err'); err.textContent = 'Wrong password!'; return; }
+  playerName = name; mode = 'host'; gCode = GAME_CODE;
+  gQs = shuffle(ALL_QS).slice(0, TOTAL);
+  await db.from('games').delete().eq('code', gCode);
+  var res = await db.from('games').insert({
+    code: gCode, status: 'lobby', current_question: 0,
+    questions: gQs, scores: {}, players: {}, revealed: false
   });
-  if(error){err.textContent='Could not create game: '+error.message;return;}
-  document.getElementById('h-lobby-name').textContent='Welcome, '+playerName+'! 👑';
-  document.getElementById('h-lobby-code').textContent=gCode;
+  if (res.error) { err.textContent = 'Could not create game: ' + res.error.message; return; }
+  document.getElementById('h-lobby-name').textContent = 'Welcome, ' + playerName + '! \uD83D\uDC51';
+  document.getElementById('h-lobby-code').textContent = gCode;
   showScreen('host-lobby');
-  renderPlayers({[playerName]:{}});
+  renderPlayers({});
   subGame();
 }
 
-/* ══ PLAYER JOIN ══ */
-async function playerJoin(){
-  const name=document.getElementById('p-name').value.trim();
-  const code=document.getElementById('p-code').value.trim().toUpperCase();
-  const err=document.getElementById('p-err');
-  err.textContent='';
-  if(!name){document.getElementById('p-name').classList.add('err');err.textContent='Please enter your name!';return;}
-  if(!code){document.getElementById('p-code').classList.add('err');err.textContent='Please enter the game code!';return;}
-  const {data,error}=await db.from('games').select('*').eq('code',code).single();
-  if(error||!data){document.getElementById('p-code').classList.add('err');err.textContent='Game not found — check the code!';return;}
-  if(data.status!=='lobby'){err.textContent='This game has already started!';return;}
-  playerName=name;mode='player';gCode=code;gQs=data.questions;
-  const players={...data.players,[playerName]:{j:Date.now()}};
-  await db.from('games').update({players}).eq('code',code);
-  document.getElementById('p-lobby-name').textContent='Hey '+playerName+'! 🎀';
-  document.getElementById('p-lobby-code').textContent=code;
+/* PLAYER JOIN */
+async function playerJoin() {
+  var name = document.getElementById('p-name').value.trim();
+  var code = document.getElementById('p-code').value.trim().toUpperCase();
+  var err = document.getElementById('p-err');
+  err.textContent = '';
+  if (!name) { document.getElementById('p-name').classList.add('err'); err.textContent = 'Please enter your name!'; return; }
+  if (!code) { document.getElementById('p-code').classList.add('err'); err.textContent = 'Please enter the game code!'; return; }
+  var res = await db.from('games').select('*').eq('code', code).single();
+  if (res.error || !res.data) { document.getElementById('p-code').classList.add('err'); err.textContent = 'Game not found — check the code!'; return; }
+  if (res.data.status !== 'lobby') { err.textContent = 'This game has already started!'; return; }
+  playerName = name; mode = 'player'; gCode = code; gQs = res.data.questions;
+  var players = Object.assign({}, res.data.players);
+  players[playerName] = { j: Date.now() };
+  await db.from('games').update({ players: players }).eq('code', code);
+  document.getElementById('p-lobby-name').textContent = 'Hey ' + playerName + '! \uD83C\uDF80';
+  document.getElementById('p-lobby-code').textContent = code;
   showScreen('player-lobby');
   renderPlayers(players);
   subGame();
 }
 
-/* ══ RENDER PLAYERS ══ */
-function renderPlayers(players){
-  const html=Object.keys(players).map(n=>`<div class="p-chip ${n===playerName?'me':''}">${n}</div>`).join('');
-  const hEl=document.getElementById('h-players');
-  const pEl=document.getElementById('p-players');
-  if(hEl)hEl.innerHTML=html;
-  if(pEl)pEl.innerHTML=html;
+/* RENDER PLAYERS */
+function renderPlayers(players) {
+  var html = Object.keys(players).map(function(n) {
+    return '<div class="p-chip' + (n === playerName ? ' me' : '') + '">' + n + '</div>';
+  }).join('');
+  var hEl = document.getElementById('h-players');
+  var pEl = document.getElementById('p-players');
+  if (hEl) hEl.innerHTML = html;
+  if (pEl) pEl.innerHTML = html;
 }
 
-/* ══ REAL-TIME ══ */
-function subGame(){
-  if(sub)db.removeChannel(sub);
-  sub=db.channel('cq:'+gCode)
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'games',filter:`code=eq.${gCode}`},
-      p=>onUpdate(p.new))
+/* REAL-TIME */
+function subGame() {
+  if (sub) db.removeChannel(sub);
+  sub = db.channel('cq:' + gCode)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'games', filter: 'code=eq.' + gCode },
+      function(p) { onUpdate(p.new); })
     .subscribe();
 }
-function onUpdate(g){
-  if(g.status==='lobby'){renderPlayers(g.players);return;}
-  if(g.status==='question'){gQs=g.questions;isRevealed=false;mode==='host'?showHostQ(g):showPlayerQ(g);}
-  if(g.status==='revealed'){isRevealed=true;mode==='host'?revealHost(g):revealPlayer(g);}
-  if(g.status==='finished')endGame(g);
+function onUpdate(g) {
+  if (g.status === 'lobby') { renderPlayers(g.players || {}); return; }
+  if (g.status === 'question') { gQs = g.questions; isRevealed = false; if (mode === 'host') showHostQ(g); else showPlayerQ(g); }
+  if (g.status === 'revealed') { isRevealed = true; if (mode === 'host') revealHost(g); else revealPlayer(g); }
+  if (g.status === 'finished') endGame(g);
 }
 
-/* ══ HOST START ══ */
-async function hostStart(){
-  await db.from('games').update({status:'question',current_question:0,revealed:false}).eq('code',gCode);
+/* HOST START */
+async function hostStart() {
+  await db.from('games').update({ status: 'question', current_question: 0, revealed: false }).eq('code', gCode);
 }
 
-/* ══ PLAYER QUESTION ══ */
-function showPlayerQ(g){
-  myAns=null;answered=false;hintUsed=false;
-  const q=g.questions[g.current_question];
-  const idx=g.current_question+1,tot=g.questions.length;
+/* PLAYER QUESTION */
+function showPlayerQ(g) {
+  myAns = null; hintUsed = false;
+  var q = g.questions[g.current_question];
+  var idx = g.current_question + 1;
+  var tot = g.questions.length;
   showScreen('quiz');
-  document.getElementById('qcount').textContent='Question '+idx+' of '+tot;
-  document.getElementById('scoreDisp').textContent=myScore;
-  document.getElementById('progBar').style.width=(idx/tot*100)+'%';
-  document.getElementById('qtxt').textContent=q.q;
-  document.getElementById('fbMsg').textContent='';
-  document.getElementById('riri-bubble').style.display='none';
+  document.getElementById('qcount').textContent = 'Question ' + idx + ' of ' + tot;
+  document.getElementById('scoreDisp').textContent = myScore;
+  document.getElementById('progBar').style.width = (idx / tot * 100) + '%';
+  document.getElementById('qtxt').textContent = q.q;
+  document.getElementById('fbMsg').textContent = '';
+  document.getElementById('riri-bubble').style.display = 'none';
   document.getElementById('ans-locked').classList.remove('show');
-  const hb=document.getElementById('hintBtn');hb.disabled=false;hb.textContent='💁🏾‍♀️ Ask Riri for a Hint!';
-  const grid=document.getElementById('opts');grid.innerHTML='';
-  shuffle(q.opts).forEach(opt=>{
-    const b=document.createElement('button');b.className='opt';b.textContent=opt;
-    b.onclick=()=>pickAns(b,opt,q.a);
+  var hb = document.getElementById('hintBtn');
+  hb.disabled = false;
+  hb.textContent = 'Ask Riri for a Hint!';
+  var grid = document.getElementById('opts');
+  grid.innerHTML = '';
+  shuffle(q.opts).forEach(function(opt) {
+    var b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = opt;
+    b.onclick = function() { pickAns(b, opt, q.a); };
     grid.appendChild(b);
   });
-  renderLiveScores(g.scores||{},false);
+  renderLiveScores(g.scores || {}, false);
   startTimer();
 }
 
-function pickAns(btn,chosen,correct){
-  if(myAns!==null||isRevealed)return;
-  myAns=chosen;answered=true;
-  document.querySelectorAll('#opts .opt').forEach(b=>b.disabled=true);
-  btn.style.borderColor='rgba(240,130,200,.8)';btn.style.background='rgba(100,0,160,.7)';
+/* PICK ANSWER */
+function pickAns(btn, chosen, correct) {
+  if (myAns !== null || isRevealed) return;
+  myAns = chosen;
+  document.querySelectorAll('#opts .opt').forEach(function(b) { b.disabled = true; });
+  btn.style.borderColor = 'rgba(240,130,200,.8)';
+  btn.style.background = 'rgba(100,0,160,.7)';
   document.getElementById('ans-locked').classList.add('show');
   stopTimer();
 }
 
-/* ══ REVEAL ON PLAYER ══ */
-function revealPlayer(g){
+/* REVEAL ON PLAYER */
+function revealPlayer(g) {
   stopTimer();
-  const q=g.questions[g.current_question];
-  document.querySelectorAll('#opts .opt').forEach(b=>{
-    b.disabled=true;
-    if(b.textContent===q.a){b.classList.add('correct');}
-    else if(b.textContent===myAns&&myAns!==q.a){b.classList.add('wrong');}
+  var q = g.questions[g.current_question];
+  document.querySelectorAll('#opts .opt').forEach(function(b) {
+    b.disabled = true;
+    if (b.textContent === q.a) b.classList.add('correct');
+    else if (b.textContent === myAns && myAns !== q.a) b.classList.add('wrong');
   });
   document.getElementById('ans-locked').classList.remove('show');
-  if(myAns===q.a){
+  if (myAns === q.a) {
     myScore++;
-    document.getElementById('scoreDisp').textContent=myScore;
-    const ws=['🎉 CORRECT! You know your cousins!','✨ Yes!! Smashing it!','💜 Brilliant!','🔥 On fire!','🌟 Absolutely right!'];
-    document.getElementById('fbMsg').textContent=ws[Math.floor(Math.random()*ws.length)];
-    burst(window.innerWidth/2,window.innerHeight/2);
-  } else if(myAns){
-    const ls=['😬 Oops! It was: '+q.a,'💙 Not quite! Answer: '+q.a,'🎀 So close! It was: '+q.a];
-    document.getElementById('fbMsg').textContent=ls[Math.floor(Math.random()*ls.length)];
+    document.getElementById('scoreDisp').textContent = myScore;
+    var ws = ['CORRECT! You know your cousins!', 'Yes!! Smashing it!', 'Brilliant!', 'On fire!', 'Absolutely right!'];
+    document.getElementById('fbMsg').textContent = ws[Math.floor(Math.random() * ws.length)];
+    burst(window.innerWidth / 2, window.innerHeight / 2);
+  } else if (myAns) {
+    document.getElementById('fbMsg').textContent = 'Not quite! Answer: ' + q.a;
   } else {
-    document.getElementById('fbMsg').textContent='⏱️ Time\'s up! Answer: '+q.a;
+    document.getElementById('fbMsg').textContent = 'Time is up! Answer: ' + q.a;
   }
 }
 
-/* ══ HOST QUESTION ══ */
-function showHostQ(g){
-  const q=g.questions[g.current_question];
-  const idx=g.current_question+1,tot=g.questions.length;
+/* HOST QUESTION */
+function showHostQ(g) {
+  var q = g.questions[g.current_question];
+  var idx = g.current_question + 1;
+  var tot = g.questions.length;
   showScreen('host-quiz');
-  document.getElementById('h-qcount').textContent='Question '+idx+' of '+tot;
-  document.getElementById('h-progBar').style.width=(idx/tot*100)+'%';
-  document.getElementById('h-qtxt').textContent=q.q;
-  document.getElementById('h-game-code').textContent=gCode;
+  document.getElementById('h-qcount').textContent = 'Question ' + idx + ' of ' + tot;
+  document.getElementById('h-progBar').style.width = (idx / tot * 100) + '%';
+  document.getElementById('h-qtxt').textContent = q.q;
+  document.getElementById('h-game-code').textContent = gCode;
   document.getElementById('host-reveal-box').classList.remove('show');
-  document.getElementById('auto-bar-wrap').style.display='none';
-  document.getElementById('auto-hint').textContent='⏳ Timer running — reveals automatically!';
-  const grid=document.getElementById('h-opts');grid.innerHTML='';
-  q.opts.forEach(opt=>{
-    const b=document.createElement('div');b.className='opt';b.style.cursor='default';b.textContent=opt;grid.appendChild(b);
+  document.getElementById('auto-bar-wrap').style.display = 'none';
+  document.getElementById('auto-hint').textContent = 'Timer running — reveals automatically!';
+  var grid = document.getElementById('h-opts');
+  grid.innerHTML = '';
+  q.opts.forEach(function(opt) {
+    var b = document.createElement('div');
+    b.className = 'opt';
+    b.style.cursor = 'default';
+    b.textContent = opt;
+    grid.appendChild(b);
   });
-  renderLiveScores(g.scores||{},true);
+  renderLiveScores(g.scores || {}, true);
   startTimer();
 }
 
-/* ══ REVEAL ON HOST ══ */
-function revealHost(g){
+/* REVEAL ON HOST */
+function revealHost(g) {
   stopTimer();
-  const q=g.questions[g.current_question];
-  const currentIdx=g.current_question;
-  const isLast=currentIdx>=g.questions.length-1;
-  document.querySelectorAll('#h-opts .opt').forEach(b=>{
-    if(b.textContent===q.a)b.classList.add('correct');
+  var q = g.questions[g.current_question];
+  var currentIdx = g.current_question;
+  var isLast = currentIdx >= g.questions.length - 1;
+  document.querySelectorAll('#h-opts .opt').forEach(function(b) {
+    if (b.textContent === q.a) b.classList.add('correct');
   });
-  document.getElementById('host-correct-text').textContent=q.a;
+  document.getElementById('host-correct-text').textContent = q.a;
   document.getElementById('host-reveal-box').classList.add('show');
-  burst(window.innerWidth/2,window.innerHeight*.4);
-  renderLiveScores(g.scores||{},true);
+  burst(window.innerWidth / 2, window.innerHeight * 0.4);
+  renderLiveScores(g.scores || {}, true);
 
-  // Auto-advance countdown bar
-  const barWrap=document.getElementById('auto-bar-wrap');
-  const barFill=document.getElementById('auto-bar-fill');
-  const hint=document.getElementById('auto-hint');
-  barWrap.style.display='block';
-  barFill.style.width='100%';
-  const delay=4000;
-  let elapsed=0;
+  var barWrap = document.getElementById('auto-bar-wrap');
+  var barFill = document.getElementById('auto-bar-fill');
+  var hint = document.getElementById('auto-hint');
+  barWrap.style.display = 'block';
+  barFill.style.width = '100%';
+  var delay = 4000;
+  var elapsed = 0;
   clearInterval(autoInt);
-  autoInt=setInterval(()=>{
-    elapsed+=100;
-    barFill.style.width=Math.max(0,100-(elapsed/delay*100))+'%';
-    const rem=Math.ceil((delay-elapsed)/1000);
-    hint.textContent=isLast?`🏆 Leaderboard in ${rem}s…`:`➡️ Next question in ${rem}s…`;
-    if(elapsed>=delay)clearInterval(autoInt);
-  },100);
+  autoInt = setInterval(function() {
+    elapsed += 100;
+    barFill.style.width = Math.max(0, 100 - (elapsed / delay * 100)) + '%';
+    var rem = Math.ceil((delay - elapsed) / 1000);
+    hint.textContent = isLast ? ('Leaderboard in ' + rem + 's...') : ('Next question in ' + rem + 's...');
+    if (elapsed >= delay) clearInterval(autoInt);
+  }, 100);
 
-  // Use setTimeout for the actual DB update — reliable async
-  setTimeout(async()=>{
-    barWrap.style.display='none';
-    try{
-      if(isLast){
-        const {error}=await db.from('games').update({status:'finished'}).eq('code',gCode);
-        if(error)console.error('finish error',error);
+  setTimeout(async function() {
+    barWrap.style.display = 'none';
+    try {
+      if (isLast) {
+        var r = await db.from('games').update({ status: 'finished' }).eq('code', gCode);
+        if (r.error) console.error('finish error', r.error);
       } else {
-        const {error}=await db.from('games').update({
-          status:'question',current_question:currentIdx+1,revealed:false
-        }).eq('code',gCode);
-        if(error)console.error('next q error',error);
+        var r2 = await db.from('games').update({ status: 'question', current_question: currentIdx + 1, revealed: false }).eq('code', gCode);
+        if (r2.error) console.error('next q error', r2.error);
       }
-    }catch(e){console.error('advance failed',e);}
-  },delay);
+    } catch(e) { console.error('advance failed', e); }
+  }, delay);
 }
 
-/* ══ LIVE SCORES ══ */
-function renderLiveScores(scores,isHost){
-  const bar=document.getElementById(isHost?'host-live-scores':'live-scores');
-  if(!bar||!Object.keys(scores).length){if(bar)bar.innerHTML='';return;}
-  const mx=Math.max(...Object.values(scores),1);
-  bar.innerHTML=Object.entries(scores).map(([n,s])=>`<div class="sc-chip ${s===mx&&s>0?'top':''}"><div class="sc-name">${n}</div><div class="sc-val">${s}</div></div>`).join('');
+/* LIVE SCORES */
+function renderLiveScores(scores, isHost) {
+  var bar = document.getElementById(isHost ? 'host-live-scores' : 'live-scores');
+  if (!bar) return;
+  var keys = Object.keys(scores);
+  if (!keys.length) { bar.innerHTML = ''; return; }
+  var mx = Math.max.apply(null, keys.map(function(k) { return scores[k]; }).concat([1]));
+  bar.innerHTML = keys.map(function(n) {
+    var s = scores[n];
+    return '<div class="sc-chip' + (s === mx && s > 0 ? ' top' : '') + '"><div class="sc-name">' + n + '</div><div class="sc-val">' + s + '</div></div>';
+  }).join('');
 }
 
-/* ══ TIMER ══ */
-function startTimer(){
-  timerSec=15;updTimer();clearInterval(timerInt);
-  timerInt=setInterval(()=>{
-    timerSec--;updTimer();
-    if(timerSec<=0){
+/* TIMER */
+function startTimer() {
+  timerSec = 15; updTimer(); clearInterval(timerInt);
+  timerInt = setInterval(function() {
+    timerSec--;
+    updTimer();
+    if (timerSec <= 0) {
       stopTimer();
-      if(myAns===null)myAns='';
-      if(mode==='host') db.from('games').update({status:'revealed',revealed:true}).eq('code',gCode);
+      if (myAns === null) myAns = '';
+      if (mode === 'host') {
+        db.from('games').update({ status: 'revealed', revealed: true }).eq('code', gCode);
+      }
     }
-  },1000);
+  }, 1000);
 }
-function stopTimer(){clearInterval(timerInt);}
-function updTimer(){
-  const pct=(timerSec/15)*100;
-  const cls=timerSec<=5?'danger':timerSec<=9?'warn':'ok';
-  // Player timer
-  const tf=document.getElementById('t-fill');
-  const tn=document.getElementById('t-num');
-  if(tf){tf.style.width=pct+'%';tf.className='t-fill '+cls;}
-  if(tn){tn.textContent=timerSec;tn.className='t-num '+cls;}
-  // Host timer
-  const htf=document.getElementById('ht-fill');
-  const htn=document.getElementById('ht-num');
-  if(htf){htf.style.width=pct+'%';htf.className='t-fill '+cls;}
-  if(htn){htn.textContent=timerSec;htn.className='t-num '+cls;}
+function stopTimer() { clearInterval(timerInt); }
+function updTimer() {
+  var pct = (timerSec / 15) * 100;
+  var cls = timerSec <= 5 ? 'danger' : timerSec <= 9 ? 'warn' : 'ok';
+  var tf = document.getElementById('t-fill');
+  var tn = document.getElementById('t-num');
+  if (tf) { tf.style.width = pct + '%'; tf.className = 't-fill ' + cls; }
+  if (tn) { tn.textContent = timerSec; tn.className = 't-num ' + cls; }
+  var htf = document.getElementById('ht-fill');
+  var htn = document.getElementById('ht-num');
+  if (htf) { htf.style.width = pct + '%'; htf.className = 't-fill ' + cls; }
+  if (htn) { htn.textContent = timerSec; htn.className = 't-num ' + cls; }
 }
 
-/* ══ END GAME ══ */
-async function endGame(g){
-  stopTimer();clearInterval(autoInt);
-
-  // Flash leaderboard for 5 seconds first
+/* END GAME */
+async function endGame(g) {
+  stopTimer(); clearInterval(autoInt);
   showScreen('leaderboard');
-  const list=document.getElementById('lb-list');
-  list.innerHTML='<p class="lb-empty">Loading scores… 🎀</p>';
-
-  try{
-    await db.from('quiz_scores').insert({player_name:playerName,score:myScore,total_questions:TOTAL});
-    const {data}=await db.from('quiz_scores').select('player_name,score,total_questions,percentage,played_at').order('score',{ascending:false}).limit(10);
-    if(data&&data.length){
-      const medals=['🥇','🥈','🥉'];const cls=['gold','silver','bronze'];
-      list.innerHTML=data.map((e,i)=>{
-        const div=document.createElement('div');
-        return `<div class="lb-entry${i<3?' '+cls[i]:''}" style="animation-delay:${i*0.08}s">
-          <div class="lb-rank">${i<3?medals[i]:'#'+(i+1)}</div>
-          <div style="flex:1;text-align:left">
-            <div class="lb-name">${e.player_name}</div>
-            <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:${e.percentage}%"></div></div>
-          </div>
-          <div class="lb-score">${e.score}/${e.total_questions}</div>
-        </div>`;
+  var list = document.getElementById('lb-list');
+  list.innerHTML = '<p class="lb-empty">Loading scores... </p>';
+  try {
+    await db.from('quiz_scores').insert({ player_name: playerName, score: myScore, total_questions: TOTAL });
+    var res = await db.from('quiz_scores').select('player_name,score,total_questions,percentage,played_at').order('score', { ascending: false }).limit(10);
+    var data = res.data || [];
+    if (data.length) {
+      var medals = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49'];
+      var cls = ['gold', 'silver', 'bronze'];
+      list.innerHTML = data.map(function(e, i) {
+        return '<div class="lb-entry' + (i < 3 ? ' ' + cls[i] : '') + '" style="animation-delay:' + (i * 0.08) + 's">' +
+          '<div class="lb-rank">' + (i < 3 ? medals[i] : '#' + (i + 1)) + '</div>' +
+          '<div style="flex:1;text-align:left">' +
+          '<div class="lb-name">' + e.player_name + '</div>' +
+          '<div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:' + (e.percentage || 0) + '%"></div></div>' +
+          '</div>' +
+          '<div class="lb-score">' + e.score + '/' + e.total_questions + '</div></div>';
       }).join('');
     }
-  }catch(err){console.error(err);}
-
-  for(let i=0;i<4;i++)setTimeout(()=>burst(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.5),i*200);
-
-  // After 5 seconds show personal result
-  setTimeout(()=>showPersonalResult(),5000);
+  } catch(err) { console.error(err); }
+  for (var i = 0; i < 4; i++) {
+    setTimeout(function() { burst(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.5); }, i * 200);
+  }
+  setTimeout(function() { showPersonalResult(); }, 5000);
 }
 
-function showPersonalResult(){
+/* PERSONAL RESULT */
+function showPersonalResult() {
   showScreen('result');
-  document.getElementById('resName').textContent=playerName;
-  document.getElementById('resSc').textContent=myScore+'/'+TOTAL;
-  const pct=myScore/TOTAL;
-  let trophy,title,msg;
-  if(pct===1){trophy='🏆';title='PERFECT SCORE!';msg='You know EVERYTHING about Elsie, Sophia and Hannah! Absolutely flawless! 💜✨';}
-  else if(pct>=0.8){trophy='🥇';title='OUTSTANDING!';msg='You really know your cousins! Just one or two tricky ones — incredible effort! 🎀🌟';}
-  else if(pct>=0.6){trophy='🥈';title='BRILLIANT!';msg='Solid cousin knowledge! You clearly pay attention. A little more practice and you'll be unbeatable! 💪';}
-  else if(pct>=0.4){trophy='🥉';title='GOOD TRY!';msg='Not bad! Some of those questions were seriously tricky. Come back and beat your score! 🎀';}
-  else{trophy='💜';title='KEEP GOING!';msg='Don\'t worry — this quiz covers a LOT! Every champion starts somewhere. Come back stronger! 🌟';}
-  document.getElementById('resTrophy').textContent=trophy;
-  document.getElementById('resTitle').textContent=title;
-  document.getElementById('resMsg').textContent=msg;
-  for(let i=0;i<5;i++)setTimeout(()=>burst(Math.random()*window.innerWidth,Math.random()*window.innerHeight),i*280);
-}
-
-/* ══ HINT ══ */
-let hintUsed=false;
-function showHint(){
-  if(hintUsed||answered)return;
-  hintUsed=true;
-  const hb=document.getElementById('hintBtn');
-  hb.disabled=true;hb.textContent='✅ Hint used!';
-  const q=gQs[curQ]||shuffledQs[curQ];
-  if(q&&q.hint){
-    document.getElementById('ririText').textContent=q.hint;
-    const rb=document.getElementById('riri-bubble');
-    rb.style.display='block';rb.style.animation='none';void rb.offsetWidth;rb.style.animation='fadeUp .4s ease both';
+  document.getElementById('resName').textContent = playerName;
+  document.getElementById('resSc').textContent = myScore + '/' + TOTAL;
+  var pct = myScore / TOTAL;
+  var trophy, title, msg;
+  if (pct === 1)     { trophy = '\uD83C\uDFC6'; title = 'PERFECT SCORE!';  msg = 'You know EVERYTHING about Elsie, Sophia and Hannah! Absolutely flawless!'; }
+  else if (pct >= 0.8) { trophy = '\uD83E\uDD47'; title = 'OUTSTANDING!';  msg = 'You really know your cousins! Just one or two tricky ones - incredible effort!'; }
+  else if (pct >= 0.6) { trophy = '\uD83E\uDD48'; title = 'BRILLIANT!';    msg = 'Solid cousin knowledge! You clearly pay attention. Come back and beat your score!'; }
+  else if (pct >= 0.4) { trophy = '\uD83E\uDD49'; title = 'GOOD TRY!';     msg = 'Not bad! Some of those questions were seriously tricky. Come back and beat your score!'; }
+  else                 { trophy = '\uD83D\uDC9C'; title = 'KEEP GOING!';   msg = 'Every champion starts somewhere. Come back stronger!'; }
+  document.getElementById('resTrophy').textContent = trophy;
+  document.getElementById('resTitle').textContent = title;
+  document.getElementById('resMsg').textContent = msg;
+  for (var i = 0; i < 5; i++) {
+    setTimeout(function() { burst(Math.random() * window.innerWidth, Math.random() * window.innerHeight); }, i * 280);
   }
 }
 
-/* ══ SHOW LEADERBOARD (from result screen) ══ */
-async function showLeaderboard(){
-  showScreen('leaderboard');
-  const list=document.getElementById('lb-list');
-  list.innerHTML='<p class="lb-empty">Loading… 🎀</p>';
-  try{
-    const {data}=await db.from('quiz_scores').select('player_name,score,total_questions,percentage,played_at').order('score',{ascending:false}).limit(10);
-    if(!data||!data.length){list.innerHTML='<p class="lb-empty">No scores yet — be the first! 🎀</p>';return;}
-    const medals=['🥇','🥈','🥉'];const cls=['gold','silver','bronze'];
-    list.innerHTML=data.map((e,i)=>`<div class="lb-entry${i<3?' '+cls[i]:''}" style="animation-delay:${i*0.08}s">
-      <div class="lb-rank">${i<3?medals[i]:'#'+(i+1)}</div>
-      <div style="flex:1;text-align:left">
-        <div class="lb-name">${e.player_name}</div>
-        <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:${e.percentage||0}%"></div></div>
-      </div>
-      <div class="lb-score">${e.score}/${e.total_questions}</div>
-    </div>`).join('');
-  }catch(err){list.innerHTML='<p class="lb-empty">Couldn't load scores 💙</p>';}
+/* HINT */
+function showHint() {
+  if (hintUsed) return;
+  hintUsed = true;
+  var hb = document.getElementById('hintBtn');
+  hb.disabled = true; hb.textContent = 'Hint used!';
+  var q = gQs[0];
+  if (q && q.hint) {
+    document.getElementById('ririText').textContent = q.hint;
+    var rb = document.getElementById('riri-bubble');
+    rb.style.display = 'block';
+    rb.style.animation = 'none';
+    void rb.offsetWidth;
+    rb.style.animation = 'fadeUp .4s ease both';
+  }
 }
 
-function resetQuiz(){
-  myScore=0;myAns=null;curQ=0;score=0;gQs=[];
-  if(sub)db.removeChannel(sub);
-  ['h-name','h-pass','p-name','p-code'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+/* LEADERBOARD from result screen */
+async function showLeaderboard() {
+  showScreen('leaderboard');
+  var list = document.getElementById('lb-list');
+  list.innerHTML = '<p class="lb-empty">Loading...</p>';
+  try {
+    var res = await db.from('quiz_scores').select('player_name,score,total_questions,percentage,played_at').order('score', { ascending: false }).limit(10);
+    var data = res.data || [];
+    if (!data.length) { list.innerHTML = '<p class="lb-empty">No scores yet - be the first!</p>'; return; }
+    var medals = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49'];
+    var cls = ['gold', 'silver', 'bronze'];
+    list.innerHTML = data.map(function(e, i) {
+      return '<div class="lb-entry' + (i < 3 ? ' ' + cls[i] : '') + '" style="animation-delay:' + (i * 0.08) + 's">' +
+        '<div class="lb-rank">' + (i < 3 ? medals[i] : '#' + (i + 1)) + '</div>' +
+        '<div style="flex:1;text-align:left">' +
+        '<div class="lb-name">' + e.player_name + '</div>' +
+        '<div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:' + (e.percentage || 0) + '%"></div></div>' +
+        '</div>' +
+        '<div class="lb-score">' + e.score + '/' + e.total_questions + '</div></div>';
+    }).join('');
+  } catch(err) { list.innerHTML = '<p class="lb-empty">Could not load scores</p>'; }
+}
+
+/* RESET */
+function resetQuiz() {
+  myScore = 0; myAns = null; gQs = [];
+  if (sub) db.removeChannel(sub);
+  ['h-name','h-pass','p-name','p-code'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
   showScreen('welcome');
 }
 
-document.addEventListener('click',(e)=>burst(e.clientX,e.clientY));
+/* BACKGROUND CANVAS */
+var canvas = document.getElementById('bg-canvas');
+var ctx = canvas.getContext('2d');
+var W, H, t = 0;
+function resizeCanvas() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+function drawTieDye() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0d001a'; ctx.fillRect(0, 0, W, H);
+  var cx = W/2, cy = H/2;
+  var colours = [[255,80,200],[160,60,255],[80,160,255],[255,120,220],[200,80,255],[100,200,255],[255,60,180],[120,40,220]];
+  var numArms = 6, maxR = Math.max(W, H) * 0.85;
+  for (var arm = 0; arm < numArms; arm++) {
+    var armAngle = (arm / numArms) * Math.PI * 2;
+    for (var r = 10; r < maxR; r += 6) {
+      var swirlAngle = armAngle + (r / maxR) * Math.PI * 5 + t * 0.004;
+      var x = cx + Math.cos(swirlAngle) * r;
+      var y = cy + Math.sin(swirlAngle) * r;
+      var progress = r / maxR;
+      var ci = Math.floor((arm + progress * colours.length)) % colours.length;
+      var ci2 = (ci + 1) % colours.length;
+      var mix = progress % 1;
+      var rc = colours[ci][0] * (1-mix) + colours[ci2][0] * mix;
+      var gc = colours[ci][1] * (1-mix) + colours[ci2][1] * mix;
+      var bc = colours[ci][2] * (1-mix) + colours[ci2][2] * mix;
+      var alpha = 0.18 * (1 - progress * 0.5);
+      ctx.beginPath();
+      ctx.arc(x, y, Math.max(2, 8 * (1 - progress * 0.5)), 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + Math.round(rc) + ',' + Math.round(gc) + ',' + Math.round(bc) + ',' + alpha + ')';
+      ctx.fill();
+    }
+  }
+  for (var ring = 0; ring < 8; ring++) {
+    var rr = (ring/8) * Math.min(W,H) * 0.45 + 10;
+    var ci3 = ring % colours.length;
+    var rgb = colours[ci3];
+    var grad = ctx.createRadialGradient(cx, cy, rr-10, cx, cy, rr+10);
+    grad.addColorStop(0, 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0)');
+    grad.addColorStop(0.5, 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0.12)');
+    grad.addColorStop(1, 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0)');
+    ctx.beginPath(); ctx.arc(cx, cy, rr + Math.sin(t*0.003+ring)*8, 0, Math.PI*2);
+    ctx.strokeStyle = grad; ctx.lineWidth = 18; ctx.stroke();
+  }
+  t++; requestAnimationFrame(drawTieDye);
+}
+drawTieDye();
 
+/* SPARKLES */
+var sl = document.getElementById('sparkle-layer');
+sl.style.cssText = 'position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden;';
+var sc = ['\u2746','\u2747','\u22C6','\u2605','\u2728','\uD83D\uDC9C','\u00B7','\uD83C\uDF00','\uD83D\uDC96','\uD83C\uDF80'];
+for (var si = 0; si < 65; si++) {
+  var sp = document.createElement('div');
+  sp.classList.add('sparkle');
+  sp.textContent = sc[Math.floor(Math.random() * sc.length)];
+  sp.style.cssText = 'left:' + (Math.random()*100) + 'vw;animation-duration:' + (Math.random()*6+4) + 's;animation-delay:' + (Math.random()*9) + 's;opacity:' + (Math.random()*0.55+0.25) + ';color:hsl(' + (290+Math.random()*80) + ',90%,' + (65+Math.random()*25) + '%);font-size:' + (Math.random()*12+8) + 'px;';
+  sl.appendChild(sp);
+}
+
+/* CLICK BURST */
+var bcols = ['#ff88cc','#cc66ff','#66aaff','#e040fb','#ff80ab','#ffffff','#ffe066'];
+function burst(x, y) {
+  for (var bi = 0; bi < 22; bi++) {
+    var p = document.createElement('div');
+    p.classList.add('particle');
+    var sz = Math.random()*11+5, angle = Math.random()*360, dist = Math.random()*110+60;
+    p.style.cssText = 'width:'+sz+'px;height:'+sz+'px;left:'+(x-sz/2)+'px;top:'+(y-sz/2)+'px;background:'+bcols[Math.floor(Math.random()*bcols.length)]+';--dx:'+Math.cos(angle*Math.PI/180)*dist+'px;--dy:'+Math.sin(angle*Math.PI/180)*dist+'px;box-shadow:0 0 8px 3px '+bcols[Math.floor(Math.random()*bcols.length)]+';animation-duration:'+(Math.random()*0.4+0.6)+'s;';
+    document.body.appendChild(p);
+    setTimeout(function() { p.remove(); }, 1100);
+  }
+}
+document.addEventListener('click', function(e) { burst(e.clientX, e.clientY); });
 </script>
-</body>
-</html></script>
 </body>
 </html>
