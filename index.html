@@ -16,7 +16,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
-body{font-family:'Nunito',sans-serif;background:#ede8ff;overflow-x:hidden;}
+body{font-family:'Nunito',sans-serif;background:#c45ef5;overflow-x:hidden;}
 
 /* ── CURSOR ── */
 /* cursor removed - using default */
@@ -467,7 +467,7 @@ let T=0;
 function draw(){
   T+=.016;
   const g=cx.createLinearGradient(0,0,W,H);
-  g.addColorStop(0,'#f0e8ff');g.addColorStop(.35,'#e8d5ff');g.addColorStop(.65,'#dde8ff');g.addColorStop(1,'#e0f0ff');
+  g.addColorStop(0,'#c45ef5');g.addColorStop(.35,'#b040e8');g.addColorStop(.65,'#c060f0');g.addColorStop(1,'#d070ff');
   cx.fillStyle=g;cx.fillRect(0,0,W,H);
   orbs.forEach(o=>{
     o.x+=o.vx;o.y+=o.vy;
