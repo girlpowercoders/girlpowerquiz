@@ -893,8 +893,13 @@ function subGame() {
 
 async function fetchAndUpdate() {
   var res = await db.from('games').select('*').eq('code', gCode).single();
-  if (res.error || !res.data) return;
-  onUpdate(res.data);
+  if (res.error || !res.data) {
+    document.getElementById('fbMsg').textContent = 'RT fetch error: ' + (res.error ? res.error.message : 'no data');
+    return;
+  }
+  var g = res.data;
+  document.getElementById('fbMsg').textContent = 'RT got status: ' + g.status + ' q:' + g.current_question + ' qs:' + (g.questions ? g.questions.length : 'NULL');
+  onUpdate(g);
 }
 
 function onUpdate(g) {
@@ -1066,7 +1071,11 @@ function startTimer() {
       stopTimer();
       if (myAns === null) myAns = '';
       if (mode === 'host') {
-        db.from('games').update({ status: 'revealed', revealed: true }).eq('code', gCode);
+        document.getElementById('auto-hint').textContent = 'Timer hit 0 - sending reveal...';
+        db.from('games').update({ status: 'revealed', revealed: true }).eq('code', gCode)
+          .then(function(r) {
+            document.getElementById('auto-hint').textContent = 'Reveal sent: ' + (r.error ? r.error.message : 'OK');
+          });
       }
     }
   }, 1000);
