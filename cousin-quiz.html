@@ -800,6 +800,15 @@ async function hostLogin() {
   alert('Step 2: password OK, creating game...');
   playerName = name; mode = 'host'; gCode = GAME_CODE;
   gQs = shuffle(ALL_QS).slice(0, TOTAL);
+  alert('Step 3: deleting old game...');
+  var delRes = await db.from('games').delete().eq('code', gCode);
+  alert('Step 4: delete done. Error=' + (delRes.error ? delRes.error.message : 'none'));
+  var res = await db.from('games').insert({
+    code: gCode, status: 'lobby', current_question: 0,
+    questions: gQs, scores: {}, players: {}, revealed: false
+  });
+  alert('Step 5: insert done. Error=' + (res.error ? res.error.message + ' code=' + res.error.code : 'none'));
+  gQs = shuffle(ALL_QS).slice(0, TOTAL);
 
   // Show a visible status so we can see what's happening
   err.textContent = 'Creating game...';
