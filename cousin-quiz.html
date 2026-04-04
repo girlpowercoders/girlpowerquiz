@@ -281,7 +281,6 @@ h1.qtitle{font-family:'Pacifico',cursive;font-size:clamp(2rem,7vw,3.2rem);margin
 .back-lnk:hover{color:#cc66ff;}
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -732,11 +731,13 @@ h1.qtitle{font-family:'Pacifico',cursive;font-size:clamp(2rem,7vw,3.2rem);margin
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* SUPABASE */
 const SB_URL = 'https://jrjmkqzjloikdhhatrwa.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impyam1rcXpqbG9pa2RoaGF0cndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwODAyOTEsImV4cCI6MjA5MDY1NjI5MX0.0TYBifEH3uSUMBnrF_Gtu9PJ9KLv20XXZYI_UQ0hf8s';
-const db = supabase.createClient(SB_URL, SB_KEY);
+var db;
+try { db = supabase.createClient(SB_URL, SB_KEY); } catch(e) { alert('Supabase failed to load: ' + e.message); }
 const HOST_PASS = 'girlpower2026';
 const GAME_CODE = 'QUIZ';
 const TOTAL = 10;
