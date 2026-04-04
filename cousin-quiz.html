@@ -887,9 +887,16 @@ function subGame() {
   if (sub) db.removeChannel(sub);
   sub = db.channel('cq:' + gCode)
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'games', filter: 'code=eq.' + gCode },
-      function(p) { onUpdate(p.new); })
+      function(p) { fetchAndUpdate(); })
     .subscribe();
 }
+
+async function fetchAndUpdate() {
+  var res = await db.from('games').select('*').eq('code', gCode).single();
+  if (res.error || !res.data) return;
+  onUpdate(res.data);
+}
+
 function onUpdate(g) {
   if (g.status === 'lobby') { renderPlayers(g.players || {}); return; }
   if (g.status === 'question') { gQs = g.questions; isRevealed = false; if (mode === 'host') showHostQ(g); else showPlayerQ(g); }
