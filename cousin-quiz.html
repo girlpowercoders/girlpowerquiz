@@ -495,7 +495,7 @@ h1.qtitle{font-family:'Pacifico',cursive;font-size:clamp(2rem,7vw,3.2rem);margin
   <div class="card">
     <div class="card-inner">
 
-      <!-- SCREEN: WELCOME / MODE SELECT -->
+      <!-- WELCOME: single screen, tabs switch the form shown -->
       <div id="screen-welcome" style="display:block;">
         <div class="intro-top">
           <span class="pom-e">🎀</span>
@@ -507,56 +507,54 @@ h1.qtitle{font-family:'Pacifico',cursive;font-size:clamp(2rem,7vw,3.2rem);margin
             From birthdays 🎂 to cheerleading stunts 🎀, poetry 🪶 and drawing 🎨 — put your cousin knowledge to the <span class="hl rainbow-txt">ultimate test!</span> 💜
           </p>
         </div>
-        <p style="color:#d8b8ff;font-weight:800;font-size:.95rem;text-align:center;margin-bottom:14px;">How are you joining?</p>
-        <div class="mode-grid">
-          <div class="mode-card selected" id="mc-player" onclick="pickMode('player')">
-            <div class="mode-icon">🎮</div>
-            <div class="mode-title">I'm Playing</div>
-            <div class="mode-desc">Join a game and answer questions</div>
-          </div>
-          <div class="mode-card" id="mc-host" onclick="pickMode('host')">
-            <div class="mode-icon">👑</div>
-            <div class="mode-title">I'm Hosting</div>
-            <div class="mode-desc">Run the quiz for everyone</div>
-          </div>
+
+        <!-- TAB TOGGLE -->
+        <div style="display:flex;background:rgba(40,0,80,.5);border:2px solid rgba(180,100,255,.3);border-radius:16px;overflow:hidden;max-width:400px;margin:0 auto 24px;">
+          <button id="tab-player" onclick="switchTab('player')"
+            style="flex:1;padding:13px 10px;background:linear-gradient(135deg,rgba(168,85,247,.3),rgba(56,189,248,.2));border:none;font-family:'Quicksand',sans-serif;font-size:.88rem;font-weight:800;letter-spacing:1px;color:#f0d8ff;cursor:pointer;">
+            🎮 I'm Playing
+          </button>
+          <button id="tab-host" onclick="switchTab('host')"
+            style="flex:1;padding:13px 10px;background:transparent;border:none;border-left:2px solid rgba(180,100,255,.3);font-family:'Quicksand',sans-serif;font-size:.88rem;font-weight:800;letter-spacing:1px;color:#a080c8;cursor:pointer;">
+            👑 I'm Hosting
+          </button>
         </div>
-        <button class="play-btn" onclick="goToDetails()" style="font-size:1.2rem;padding:14px 44px;">Continue →</button>
+
+        <!-- PLAYER FORM -->
+        <div id="form-player">
+          <div class="field-wrap">
+            <label class="field-lbl">Your Name</label>
+            <input class="field-inp" id="p-name" type="text" placeholder="Enter your name..." maxlength="20" autocomplete="off"/>
+          </div>
+          <div class="field-wrap">
+            <label class="field-lbl">Game Code <span style="font-weight:600;color:#a080c8;text-transform:none;letter-spacing:0;">(ask the host!)</span></label>
+            <input class="field-inp" id="p-code" type="text" placeholder="e.g. QUIZ" autocomplete="off" style="text-transform:uppercase;letter-spacing:5px;font-size:1.2rem;"/>
+          </div>
+          <div class="field-err" id="p-err"></div>
+          <button class="play-btn" onclick="playerJoin()" style="font-size:1.2rem;padding:14px 44px;">Join the Game! 🎉</button>
+        </div>
+
+        <!-- HOST FORM -->
+        <div id="form-host" style="display:none;">
+          <div class="field-wrap">
+            <label class="field-lbl">Your Name</label>
+            <input class="field-inp" id="h-name" type="text" placeholder="e.g. Elsie, Hannah, Sophia…" maxlength="20" autocomplete="off"/>
+          </div>
+          <div class="field-wrap">
+            <label class="field-lbl">Host Password</label>
+            <div style="position:relative;">
+              <input class="field-inp" id="h-pass" type="password" placeholder="Enter host password" style="padding-right:46px;"/>
+              <button onclick="toggleEye()" type="button" id="eyeBtn" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:#a080c8;padding:4px;">👁️</button>
+            </div>
+          </div>
+          <div class="field-err" id="h-err"></div>
+          <button class="play-btn" onclick="hostLogin()" style="font-size:1.2rem;padding:14px 44px;">Create Game 👑</button>
+        </div>
       </div>
 
-      <!-- SCREEN: PLAYER DETAILS -->
-      <div id="screen-player-join" style="display:none;">
-        <button class="back-lnk" onclick="showScreen('welcome')">← Back</button>
-        <div class="step-badge">🎮 Join a Game</div>
-        <div class="field-wrap">
-          <label class="field-lbl">Your Name</label>
-          <input class="field-inp" id="p-name" type="text" placeholder="e.g. Theodore, Ezekiel, Arthur…" maxlength="20" autocomplete="off"/>
-        </div>
-        <div class="field-wrap">
-          <label class="field-lbl">Game Code <span style="font-weight:600;color:#a080c8;text-transform:none;letter-spacing:0;">(ask the host!)</span></label>
-          <input class="field-inp" id="p-code" type="text" placeholder="e.g. QUIZ" autocomplete="off" style="text-transform:uppercase;letter-spacing:5px;font-size:1.2rem;"/>
-        </div>
-        <div class="field-err" id="p-err"></div>
-        <button class="play-btn" onclick="playerJoin()" style="font-size:1.2rem;padding:14px 44px;">Join! 🎉</button>
-      </div>
-
-      <!-- SCREEN: HOST DETAILS -->
-      <div id="screen-host-login" style="display:none;">
-        <button class="back-lnk" onclick="showScreen('welcome')">← Back</button>
-        <div class="step-badge">👑 Host Setup</div>
-        <div class="field-wrap">
-          <label class="field-lbl">Your Name</label>
-          <input class="field-inp" id="h-name" type="text" placeholder="e.g. Elsie, Hannah, Sophia…" maxlength="20" autocomplete="off"/>
-        </div>
-        <div class="field-wrap">
-          <label class="field-lbl">Host Password</label>
-          <div style="position:relative;">
-            <input class="field-inp" id="h-pass" type="password" placeholder="Enter host password" style="padding-right:46px;"/>
-            <button onclick="toggleEye()" type="button" id="eyeBtn" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:#a080c8;padding:4px;">👁️</button>
-          </div>
-        </div>
-        <div class="field-err" id="h-err"></div>
-        <button class="play-btn" onclick="hostLogin()" style="font-size:1.2rem;padding:14px 44px;">Create Game 👑</button>
-      </div>
+      <!-- dummy screens kept so showScreen() doesnt break -->
+      <div id="screen-player-join" style="display:none;"></div>
+      <div id="screen-host-login" style="display:none;"></div>
 
       <!-- SCREEN: HOST LOBBY -->
       <div id="screen-host-lobby" style="display:none;">
@@ -760,13 +758,21 @@ function showScreen(id) {
   if (target) target.style.display = 'block';
 }
 
+/* TAB SWITCH */
+function switchTab(tab) {
+  var isHost = tab === 'host';
+  document.getElementById('form-player').style.display = isHost ? 'none' : 'block';
+  document.getElementById('form-host').style.display = isHost ? 'block' : 'none';
+  document.getElementById('tab-player').style.background = isHost ? 'transparent' : 'linear-gradient(135deg,rgba(168,85,247,.3),rgba(56,189,248,.2))';
+  document.getElementById('tab-player').style.color = isHost ? '#a080c8' : '#f0d8ff';
+  document.getElementById('tab-host').style.background = isHost ? 'linear-gradient(135deg,rgba(168,85,247,.3),rgba(56,189,248,.2))' : 'transparent';
+  document.getElementById('tab-host').style.color = isHost ? '#f0d8ff' : '#a080c8';
+  selMode = tab;
+}
+
 /* MODE SELECT */
 var selMode = 'player';
-function pickMode(m) {
-  selMode = m;
-  document.getElementById('mc-player').classList.toggle('selected', m === 'player');
-  document.getElementById('mc-host').classList.toggle('selected', m === 'host');
-}
+function pickMode(m) { switchTab(m); }
 function goToDetails() {
   if (selMode === 'player') showScreen('player-join');
   else showScreen('host-login');
@@ -1143,6 +1149,7 @@ function resetQuiz() {
   ['h-name','h-pass','p-name','p-code'].forEach(function(id) {
     var el = document.getElementById(id); if (el) el.value = '';
   });
+  switchTab('player');
   showScreen('welcome');
 }
 
