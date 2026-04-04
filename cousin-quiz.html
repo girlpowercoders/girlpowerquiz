@@ -987,7 +987,7 @@ function revealPlayer(g){
     const ls=['😬 Oops! It was: '+q.a,'💙 Not quite! Answer: '+q.a,'🎀 So close! It was: '+q.a];
     document.getElementById('fbMsg').textContent=ls[Math.floor(Math.random()*ls.length)];
   } else {
-    document.getElementById('fbMsg').textContent='⏱️ Time's up! Answer: '+q.a;
+    document.getElementById('fbMsg').textContent='⏱️ Time\'s up! Answer: '+q.a;
   }
 }
 
@@ -1139,7 +1139,7 @@ function showPersonalResult(){
   else if(pct>=0.8){trophy='🥇';title='OUTSTANDING!';msg='You really know your cousins! Just one or two tricky ones — incredible effort! 🎀🌟';}
   else if(pct>=0.6){trophy='🥈';title='BRILLIANT!';msg='Solid cousin knowledge! You clearly pay attention. A little more practice and you'll be unbeatable! 💪';}
   else if(pct>=0.4){trophy='🥉';title='GOOD TRY!';msg='Not bad! Some of those questions were seriously tricky. Come back and beat your score! 🎀';}
-  else{trophy='💜';title='KEEP GOING!';msg='Don't worry — this quiz covers a LOT! Every champion starts somewhere. Come back stronger! 🌟';}
+  else{trophy='💜';title='KEEP GOING!';msg='Don\'t worry — this quiz covers a LOT! Every champion starts somewhere. Come back stronger! 🌟';}
   document.getElementById('resTrophy').textContent=trophy;
   document.getElementById('resTitle').textContent=title;
   document.getElementById('resMsg').textContent=msg;
@@ -1191,5 +1191,7 @@ function resetQuiz(){
 document.addEventListener('click',(e)=>burst(e.clientX,e.clientY));
 
 </script>
+</body>
+</html></script>
 </body>
 </html>
