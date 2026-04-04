@@ -783,7 +783,7 @@ const TOTAL = 10;
 
 /* STATE */
 let playerName = '', mode = 'player', myScore = 0, myAns = null;
-let gCode = '', gQs = [], isRevealed = false, hintUsed = false;
+let gCode = '', gQs = [], isRevealed = false, hintUsed = false, currentQIndex = 0;
 let timerSec = 15, timerInt = null, autoInt = null, sub = null;
 
 function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
@@ -893,13 +893,8 @@ function subGame() {
 
 async function fetchAndUpdate() {
   var res = await db.from('games').select('*').eq('code', gCode).single();
-  if (res.error || !res.data) {
-    document.getElementById('fbMsg').textContent = 'RT fetch error: ' + (res.error ? res.error.message : 'no data');
-    return;
-  }
-  var g = res.data;
-  document.getElementById('fbMsg').textContent = 'RT got status: ' + g.status + ' q:' + g.current_question + ' qs:' + (g.questions ? g.questions.length : 'NULL');
-  onUpdate(g);
+  if (res.error || !res.data) return;
+  onUpdate(res.data);
 }
 
 function onUpdate(g) {
@@ -917,6 +912,7 @@ async function hostStart() {
 /* PLAYER QUESTION */
 function showPlayerQ(g) {
   myAns = null; hintUsed = false;
+  currentQIndex = g.current_question;
   var q = g.questions[g.current_question];
   var idx = g.current_question + 1;
   var tot = g.questions.length;
@@ -1071,11 +1067,7 @@ function startTimer() {
       stopTimer();
       if (myAns === null) myAns = '';
       if (mode === 'host') {
-        document.getElementById('auto-hint').textContent = 'Timer hit 0 - sending reveal...';
-        db.from('games').update({ status: 'revealed', revealed: true }).eq('code', gCode)
-          .then(function(r) {
-            document.getElementById('auto-hint').textContent = 'Reveal sent: ' + (r.error ? r.error.message : 'OK');
-          });
+        db.from('games').update({ status: 'revealed', revealed: true }).eq('code', gCode);
       }
     }
   }, 1000);
@@ -1150,9 +1142,9 @@ function showHint() {
   hintUsed = true;
   var hb = document.getElementById('hintBtn');
   hb.disabled = true; hb.textContent = 'Hint used!';
-  var q = gQs[0];
-  if (q && q.hint) {
-    document.getElementById('ririText').textContent = q.hint;
+  var currentQuestion = gQs[currentQIndex];
+  if (currentQuestion && currentQuestion.hint) {
+    document.getElementById('ririText').textContent = currentQuestion.hint;
     var rb = document.getElementById('riri-bubble');
     rb.style.display = 'block';
     rb.style.animation = 'none';
