@@ -617,14 +617,14 @@ h1.qtitle{font-family:'Pacifico',cursive;font-size:clamp(2rem,7vw,3.2rem);margin
       </div>
 
       <!-- COUNTDOWN -->
-      <div id="screen-countdown">
+      <div id="screen-countdown" style="display:none;">
         <p class="cdlabel" style="margin-bottom:16px">Get ready...</p>
         <div class="cdnum" id="cdnum">3</div>
         <p class="cdlabel" id="cdsub" style="margin-top:16px">The quiz starts in...</p>
       </div>
 
       <!-- QUIZ -->
-      <div id="screen-quiz">
+      <div id="screen-quiz" style="display:none;">
         <div class="live-scores" id="live-scores"></div>
         <div class="timer-row">
           <div class="t-num ok" id="t-num">15</div>
@@ -704,8 +704,9 @@ h1.qtitle{font-family:'Pacifico',cursive;font-size:clamp(2rem,7vw,3.2rem);margin
       </div>
 
       <!-- RESULT -->
-      <div id="screen-result">
+      <div id="screen-result" style="display:none;">
         <span class="trophy-e" id="resTrophy">🏆</span>
+        <p style="color:#d8b8ff;font-weight:800;font-size:1rem;margin-bottom:4px;">Well done, <span id="resName"></span>!</p>
         <p class="res-title rainbow-txt" id="resTitle">Amazing!</p>
         <p class="res-score" id="resSc">0/10</p>
         <p class="res-msg" id="resMsg"></p>
