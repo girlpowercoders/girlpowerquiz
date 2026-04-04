@@ -16,11 +16,10 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
-body{font-family:'Nunito',sans-serif;background:#ede8ff;cursor:none;overflow-x:hidden;}
+body{font-family:'Nunito',sans-serif;background:#ede8ff;overflow-x:hidden;}
 
 /* ── CURSOR ── */
-#cur{position:fixed;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff,#d4aaee 60%,#b88cdd);box-shadow:0 0 10px rgba(180,130,220,.8);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .08s;}
-.ctr{position:fixed;border-radius:50%;pointer-events:none;z-index:9990;transform:translate(-50%,-50%);}
+/* cursor removed - using default */
 
 /* ── CANVAS ── */
 #bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
@@ -50,7 +49,7 @@ body{font-family:'Nunito',sans-serif;background:#ede8ff;cursor:none;overflow-x:h
 .err-msg{font-size:.82rem;font-weight:700;color:var(--red);min-height:20px;margin-top:6px;}
 
 /* ── BUTTONS ── */
-.btn{display:block;width:100%;padding:15px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;cursor:none;transition:all .2s;position:relative;overflow:hidden;}
+.btn{display:block;width:100%;padding:15px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;transition:all .2s;position:relative;overflow:hidden;}
 .btn:hover{transform:translateY(-3px);}
 .btn-primary{background:linear-gradient(135deg,var(--purple),var(--deep));color:#fff;box-shadow:0 6px 20px rgba(124,58,237,.35),0 3px 0 rgba(100,30,200,.3);}
 .btn-primary:hover{box-shadow:0 10px 30px rgba(124,58,237,.45),0 3px 0 rgba(100,30,200,.3);}
@@ -67,7 +66,7 @@ body{font-family:'Nunito',sans-serif;background:#ede8ff;cursor:none;overflow-x:h
 
 /* ── MODE CARDS ── */
 .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
-.mode-card{border:2px solid rgba(168,85,247,.18);border-radius:18px;padding:20px 16px;text-align:center;cursor:none;transition:all .2s;background:rgba(255,255,255,.6);}
+.mode-card{border:2px solid rgba(168,85,247,.18);border-radius:18px;padding:20px 16px;text-align:center;transition:all .2s;background:rgba(255,255,255,.6);}
 .mode-card:hover{border-color:rgba(168,85,247,.45);background:rgba(168,85,247,.06);transform:translateY(-3px);}
 .mode-card.selected{border-color:var(--purple);background:rgba(168,85,247,.1);box-shadow:0 0 0 3px rgba(168,85,247,.15);}
 .mode-icon{font-size:2.2rem;margin-bottom:8px;}
@@ -119,7 +118,7 @@ body{font-family:'Nunito',sans-serif;background:#ede8ff;cursor:none;overflow-x:h
 /* OPTIONS */
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 @media(max-width:480px){.opts{grid-template-columns:1fr;}}
-.opt{background:#fff;border:2px solid rgba(200,180,240,.3);color:var(--text);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;padding:13px 14px;border-radius:14px;cursor:none;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px;}
+.opt{background:#fff;border:2px solid rgba(200,180,240,.3);color:var(--text);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;padding:13px 14px;border-radius:14px;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px;}
 .opt-letter{width:28px;height:28px;flex-shrink:0;background:rgba(168,85,247,.1);border:1.5px solid rgba(168,85,247,.22);border-radius:8px;font-size:.7rem;font-weight:900;display:flex;align-items:center;justify-content:center;color:var(--deep);transition:all .18s;}
 .opt:hover:not(:disabled){background:rgba(168,85,247,.07);border-color:rgba(168,85,247,.4);transform:translateY(-2px);}
 .opt:hover:not(:disabled) .opt-letter{background:var(--lavender);color:#fff;border-color:var(--lavender);}
@@ -184,13 +183,13 @@ body{font-family:'Nunito',sans-serif;background:#ede8ff;cursor:none;overflow-x:h
 #toast.on{opacity:1;}
 
 /* BACK LINK */
-.back-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;cursor:none;padding:8px 0;transition:color .2s;text-decoration:none;}
+.back-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;padding:8px 0;transition:color .2s;text-decoration:none;}
 .back-btn:hover{color:var(--mid);}
 </style>
 </head>
 <body>
 <canvas id="bg"></canvas>
-<div id="cur"></div>
+
 <div id="toast"></div>
 <div id="app">
 
@@ -263,7 +262,7 @@ body{font-family:'Nunito',sans-serif;background:#ede8ff;cursor:none;overflow-x:h
       <label class="label">Host Password</label>
       <div style="position:relative;">
         <input class="inp" id="h-pass" type="password" placeholder="Enter the host password" style="padding-right:48px;"/>
-        <button onclick="toggleEye()" type="button" id="eyeBtn" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:none;font-size:1.1rem;color:var(--muted);padding:4px;">👁️</button>
+        <button onclick="toggleEye()" type="button" id="eyeBtn" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:1.1rem;color:var(--muted);padding:4px;">👁️</button>
       </div>
     </div>
     <div class="err-msg" id="h-err"></div>
@@ -485,13 +484,7 @@ function draw(){
 }
 resize();draw();
 
-/* ══ CURSOR ══ */
-const cur=document.getElementById('cur');
-const trails=[];
-for(let i=0;i<8;i++){const d=document.createElement('div');d.className='ctr';const sz=11-i*.9;d.style.cssText=`width:${sz}px;height:${sz}px;background:rgba(${i%2?'184,216,240':'201,184,232'},${.32-i*.03})`;document.body.appendChild(d);trails.push({el:d,x:0,y:0});}
-let mx=0,my=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function at(){trails.forEach((d,i)=>{const p=i?trails[i-1]:{x:mx,y:my};d.x+=(p.x-d.x)*.35;d.y+=(p.y-d.y)*.35;d.el.style.left=d.x+'px';d.el.style.top=d.y+'px';});requestAnimationFrame(at);})();
+
 
 /* ══ CONFETTI ══ */
 const CC=['#c084fc','#7dd3fc','#e9d5ff','#a855f7','#38bdf8','#f0d0e8'];
