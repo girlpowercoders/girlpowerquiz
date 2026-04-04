@@ -375,9 +375,10 @@ body{font-family:'Nunito',sans-serif;background:#ede8ff;cursor:none;overflow-x:h
 
   <!-- HOST ACTION AREA — clearly one button at a time -->
   <div style="margin-top:10px;" id="hq-action">
-    <p style="font-size:.78rem;color:var(--muted);font-weight:700;text-align:center;margin-bottom:8px;" id="hq-action-hint">Give players time to answer, then reveal!</p>
-    <button class="btn btn-reveal" id="hq-reveal-btn" onclick="doReveal()">✨ Reveal the Answer</button>
-    <button class="btn btn-next" id="hq-next-btn" onclick="doNext()" style="display:none;margin-top:10px;">Next Question →</button>
+    <p style="font-size:.78rem;color:var(--muted);font-weight:700;text-align:center;margin-bottom:8px;" id="hq-action-hint">⏳ Timer running — answer will reveal automatically!</p>
+    <div id="hq-auto-bar" style="height:6px;background:rgba(200,180,240,.2);border-radius:10px;overflow:hidden;display:none;margin-top:6px;">
+      <div id="hq-auto-fill" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:10px;transition:width .1s linear;width:100%;"></div>
+    </div>
   </div>
 </div>
 
@@ -445,7 +446,7 @@ function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.fl
 
 /* ══ STATE ══ */
 let mode='player',myName='',myScore=0,myAns=null,gCode='',gQs=[],isRevealed=false;
-let timerSec=15,timerInt=null,sub=null;
+let timerSec=15,timerInt=null,sub=null,autoInt=null;
 
 /* ══ BACKGROUND ══ */
 const cv=document.getElementById('bg'),cx=cv.getContext('2d');
@@ -664,10 +665,10 @@ function showHQ(g){
     d.innerHTML=`<div class="opt-letter">${L}</div><span>${q.o[i]}</span>`;og.appendChild(d);
   });
   document.getElementById('hq-reveal').classList.remove('show');
-  document.getElementById('hq-reveal-btn').style.display='block';
-  document.getElementById('hq-next-btn').style.display='none';
-  document.getElementById('hq-action-hint').textContent='Give players time to answer, then reveal!';
+  document.getElementById('hq-action-hint').textContent='⏳ Timer running — answer will reveal automatically!';
+  document.getElementById('hq-auto-bar').style.display='none';
   renderScores(g.scores||{});
+  startTimer();
 }
 
 /* ══ HOST REVEAL ══ */
@@ -676,24 +677,34 @@ function revealH(g){
   document.querySelectorAll('#hq-opts .opt')[q.a].classList.add('correct');
   document.getElementById('hq-correct').textContent=q.o[q.a];
   document.getElementById('hq-reveal').classList.add('show');
-  document.getElementById('hq-reveal-btn').style.display='none';
   const isLast=g.current_question>=g.questions.length-1;
-  const nb=document.getElementById('hq-next-btn');
-  nb.textContent=isLast?'🏆 Finish & Show Results':'Next Question →';
-  nb.style.display='block';
-  document.getElementById('hq-action-hint').textContent=isLast?'All done — show everyone the results!':'Ready? Move to the next question when everyone has seen the answer.';
   burst(innerWidth/2,innerHeight*.4);
   renderScores(g.scores||{});
+
+  // Auto-advance after 4 seconds
+  const hint=document.getElementById('hq-action-hint');
+  const bar=document.getElementById('hq-auto-bar');
+  const fill=document.getElementById('hq-auto-fill');
+  const delay=4000;
+  let elapsed=0;
+  bar.style.display='block';
+  fill.style.width='100%';
+  hint.textContent=isLast?'🏆 Showing results in 4 seconds…':'➡️ Next question in 4 seconds…';
+  clearInterval(autoInt);
+  autoInt=setInterval(()=>{
+    elapsed+=100;
+    fill.style.width=Math.max(0,100-(elapsed/delay*100))+'%';
+    if(elapsed>=delay){
+      clearInterval(autoInt);
+      bar.style.display='none';
+      if(isLast) db.from('games').update({status:'finished'}).eq('code',gCode);
+      else db.from('games').update({status:'question',current_question:g.current_question+1,revealed:false}).eq('code',gCode);
+    }
+  },100);
 }
 
-/* ══ HOST ACTIONS ══ */
+/* ══ HOST REVEAL TRIGGER ══ */
 async function doReveal(){await db.from('games').update({status:'revealed',revealed:true}).eq('code',gCode);}
-async function doNext(){
-  const {data}=await db.from('games').select('current_question,questions').eq('code',gCode).single();
-  const nxt=data.current_question+1;
-  if(nxt>=data.questions.length)await db.from('games').update({status:'finished'}).eq('code',gCode);
-  else await db.from('games').update({status:'question',current_question:nxt,revealed:false}).eq('code',gCode);
-}
 
 /* ══ SCORES BAR ══ */
 function renderScores(scores){
@@ -706,7 +717,15 @@ function renderScores(scores){
 /* ══ TIMER ══ */
 function startTimer(){
   timerSec=15;updTimer();clearInterval(timerInt);
-  timerInt=setInterval(()=>{timerSec--;updTimer();if(timerSec<=0){stopTimer();if(myAns===null)myAns=-1;}},1000);
+  timerInt=setInterval(()=>{
+    timerSec--;updTimer();
+    if(timerSec<=0){
+      stopTimer();
+      if(myAns===null)myAns=-1;
+      // Host auto-reveals when timer hits 0
+      if(mode==='host') doReveal();
+    }
+  },1000);
 }
 function stopTimer(){clearInterval(timerInt);}
 function updTimer(){
@@ -720,8 +739,47 @@ function updTimer(){
 
 /* ══ END GAME ══ */
 async function endGame(g){
-  stopTimer();show('s-end');
-  try{await db.from('quiz_scores').insert({player_name:myName,score:myScore,total_questions:QS.length});}catch(e){}
+  stopTimer();clearInterval(autoInt);
+
+  // Flash leaderboard for 5 seconds first
+  show('s-lb');
+  const list=document.getElementById('lb-list');
+  list.innerHTML='<div style="text-align:center;color:var(--muted);padding:18px;font-size:1rem;font-weight:800;">🏆 Loading scores… 💜</div>';
+
+  try{
+    // Save score first
+    await db.from('quiz_scores').insert({player_name:myName,score:myScore,total_questions:QS.length});
+    // Load leaderboard
+    const {data}=await db.from('quiz_scores').select('player_name,score,total_questions,percentage,played_at').order('score',{ascending:false}).limit(10);
+    if(data&&data.length){
+      const medals=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+      list.innerHTML=data.map((s,i)=>`<div class="lb-item ${i===0?'gold':''}"><span style="font-size:1.25rem;">${medals[i]||'⭐'}</span><div class="lb-name">${s.player_name}</div><div style="text-align:right"><div class="lb-score">${s.score}/${s.total_questions}</div><div class="lb-pct">${s.percentage}%</div></div></div>`).join('');
+    }
+  }catch(e){}
+
+  // Add a countdown notice
+  const lbTitle=document.querySelector('#s-lb .end-title');
+  if(lbTitle)lbTitle.textContent='🏆 Girl Power Leaderboard';
+  const notice=document.createElement('div');
+  notice.id='lb-notice';
+  notice.style.cssText='text-align:center;font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:16px;';
+  notice.textContent='Your results in 5 seconds…';
+  const lbList=document.getElementById('lb-list');
+  lbList.parentNode.insertBefore(notice,lbList);
+
+  // Confetti on leaderboard
+  setTimeout(()=>{for(let i=0;i<4;i++)setTimeout(()=>burst(innerWidth*(.2+Math.random()*.6),innerHeight*.3),i*200);},300);
+
+  // After 5 seconds go to personal end screen
+  setTimeout(()=>{
+    const n=document.getElementById('lb-notice');
+    if(n)n.remove();
+    showPersonalEnd(g);
+  },5000);
+}
+
+function showPersonalEnd(g){
+  show('s-end');
   document.getElementById('e-score').textContent=myScore;
   document.getElementById('e-score-section').style.display='block';
   const pct=myScore/QS.length;
@@ -736,7 +794,7 @@ async function endGame(g){
   document.getElementById('e-title').textContent=title;
   const pts=msg.split('|||');
   document.getElementById('e-msg').innerHTML=`<span class="end-personal">${pts[0]}</span>`+(pts[1]?`<span class="end-quote">${pts[1]}</span><span class="end-attr">${pts[2]||''}</span>`:'');
-  setTimeout(()=>{for(let i=0;i<5;i++)setTimeout(()=>burst(innerWidth*(.2+Math.random()*.6),innerHeight*(.2+Math.random()*.4)),i*180);},350);
+  setTimeout(()=>{for(let i=0;i<5;i++)setTimeout(()=>burst(innerWidth*(.2+Math.random()*.6),innerHeight*(.2+Math.random()*.4)),i*180);},300);
 }
 
 /* ══ LEADERBOARD ══ */
