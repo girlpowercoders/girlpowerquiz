@@ -713,7 +713,6 @@ function revealH(g){
     }
   },100);
 }
-}
 
 /* ══ HOST REVEAL TRIGGER ══ */
 async function doReveal(){await db.from('games').update({status:'revealed',revealed:true}).eq('code',gCode);}
