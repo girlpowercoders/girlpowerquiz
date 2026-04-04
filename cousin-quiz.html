@@ -733,6 +733,45 @@ h1.qtitle{font-family:'Pacifico',cursive;font-size:clamp(2rem,7vw,3.2rem);margin
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+/* QUESTIONS */
+const ALL_QS = [
+  {q:"What is Elsie's favourite colour?", a:"Purple", opts:["Pink","Purple","Blue","Green"], hint:"Think about what colour Elsie loves on everything — her room, her outfits, her iPad case!"},
+  {q:"What tech gadget does Elsie absolutely love?", a:"Her iPad", opts:["Her Phone","Her iPad","A Laptop","A Nintendo Switch"], hint:"It's a flat screen device made by Apple that she carries everywhere!"},
+  {q:"Which activity is Elsie most passionate about?", a:"Cheerleading", opts:["Swimming","Gymnastics","Cheerleading","Dancing"], hint:"Think pom-poms, stunts and chanting! She loves being on a squad!"},
+  {q:"What is a High-V in cheerleading?", a:"Arms raised in a V shape above the head", opts:["A kick above the waist","Arms raised in a V shape above the head","A jump where both feet leave the floor","A spin move"], hint:"Think of the letter V — where would your arms go?"},
+  {q:"What is a toe touch jump in cheerleading?", a:"A jump where legs go out wide and arms reach the toes", opts:["A kick to the nose","Touching your toes standing up","A jump where legs go out wide and arms reach the toes","A cartwheel move"], hint:"In this jump your legs fly out sideways like a straddle!"},
+  {q:"In cheerleading what is a Liberty?", a:"A skill where one foot is held up by the team", opts:["A backflip","A skill where one foot is held up by the team","A cartwheel to the side","A forward roll"], hint:"Think of the Statue of Liberty — one thing raised up high!"},
+  {q:"What does a base do in a cheerleading stunt?", a:"Holds and supports the flyer", opts:["Jumps the highest","Holds and supports the flyer","Leads the chant","Does the back walkover"], hint:"The base is like the foundation of a building — they hold everyone else up!"},
+  {q:"What creative hobby does Elsie love?", a:"Art", opts:["Singing","Art","Cooking","Writing"], hint:"Think pencils, paintbrushes and sketchbooks!"},
+  {q:"When is Elsie's birthday?", a:"23rd September", opts:["18th May","22nd September","23rd September","14th October"], hint:"It's just ONE day after another cousin's birthday in September!"},
+  {q:"What year was Elsie born?", a:"2016", opts:["2013","2014","2015","2016"], hint:"Elsie is the youngest of the three cousins — she was born last!"},
+  {q:"What is Sophia's favourite building toy?", a:"LEGO", opts:["Duplo","Playmobil","LEGO","K'Nex"], hint:"Think colourful plastic bricks that click together!"},
+  {q:"Which sport does Sophia love?", a:"Gymnastics", opts:["Cheerleading","Gymnastics","Swimming","Dance"], hint:"Think cartwheels, backflips and balance beams!"},
+  {q:"Sophia loves writing and performing what art form?", a:"Poetry", opts:["Songs","Stories","Poetry","Plays"], hint:"It often rhymes and has rhythm — she performs it out loud!"},
+  {q:"What is it called when a poem has lines that end with the same sound?", a:"Rhyme", opts:["Rhythm","Rhyme","Alliteration","Verse"], hint:"Think cat sat on the mat — the ending sounds match!"},
+  {q:"What do we call one section of lines in a poem?", a:"A stanza", opts:["A chapter","A paragraph","A stanza","A chorus"], hint:"In a song it would be called a verse — in poetry it has a different name!"},
+  {q:"What poetic technique repeats the same starting sound in words?", a:"Alliteration", opts:["Rhyme","Metaphor","Alliteration","Simile"], hint:"Sally sells seashells — notice how lots of words start with the same letter?"},
+  {q:"A simile in poetry compares two things using which words?", a:"Like or as", opts:["And or but","Like or as","Because or so","With or by"], hint:"She ran LIKE the wind or fast AS lightning — what little words make those comparisons?"},
+  {q:"What instrument does Sophia play?", a:"Piano", opts:["Guitar","Violin","Piano","Drums"], hint:"It has black and white keys and you play it with your fingers!"},
+  {q:"When is Sophia's birthday?", a:"22nd September", opts:["18th May","22nd September","23rd September","1st October"], hint:"It's in September — one day BEFORE another cousin's birthday!"},
+  {q:"What year was Sophia born?", a:"2015", opts:["2013","2014","2015","2016"], hint:"Sophia is the middle child age-wise — born between the oldest and youngest!"},
+  {q:"What creative hobby does Hannah enjoy?", a:"Art & Drawing", opts:["Poetry","Coding","Art & Drawing","Singing"], hint:"Think pencils, sketchbooks and paintbrushes — she loves making pictures!"},
+  {q:"Which sport does Hannah love that takes place on ice?", a:"Ice-skating", opts:["Ice Hockey","Curling","Ice-skating","Skiing"], hint:"You wear special boots with blades and glide across a frozen rink!"},
+  {q:"Hannah loves splashing about — which activity?", a:"Swimming", opts:["Surfing","Swimming","Diving","Water Polo"], hint:"Goggles, a swimming cap and lanes in a pool!"},
+  {q:"When drawing a portrait, where on the head do the eyes sit?", a:"Halfway down the head", opts:["Near the very top","Near the chin","Halfway down the head","One third from the top"], hint:"Most people draw eyes too high! Your eyes are actually in the middle of your face!"},
+  {q:"What are the three PRIMARY colours in art?", a:"Red, Yellow and Blue", opts:["Red, Green and Blue","Red, Yellow and Blue","Pink, Purple and Orange","Black, White and Grey"], hint:"You can mix these three colours to make almost every other colour!"},
+  {q:"What drawing technique makes objects look 3D by adding dark areas?", a:"Shading", opts:["Colouring","Shading","Outlining","Tracing"], hint:"Light comes from one direction — the opposite side gets darker!"},
+  {q:"What shape is the best foundation for drawing a human head?", a:"An oval / egg shape", opts:["A perfect circle","A square","An oval / egg shape","A diamond"], hint:"Think of an egg standing upright — slightly wider at the top, narrower at the chin!"},
+  {q:"When is Hannah's birthday?", a:"18th May", opts:["18th May","22nd September","23rd September","30th June"], hint:"Hannah's birthday is NOT in September like the others — it's in a spring month!"},
+  {q:"What year was Hannah born?", a:"2014", opts:["2013","2014","2015","2016"], hint:"Hannah is the OLDEST of the three cousins!"},
+  {q:"Hannah loves being outdoors — what does she love doing?", a:"Playing outside", opts:["Reading","Playing outside","Gardening","Cycling"], hint:"No screens, just fresh air, running around and having fun!"},
+  {q:"Who is the OLDEST of the three cousins?", a:"Hannah", opts:["Elsie","Sophia","Hannah","They're the same age"], hint:"Think about who was born in the earliest year!"},
+  {q:"Who is the YOUNGEST of the three cousins?", a:"Elsie", opts:["Elsie","Sophia","Hannah","They're all the same age"], hint:"Think about who was born in the most recent year!"},
+  {q:"Which TWO cousins have birthdays in September?", a:"Sophia & Elsie", opts:["Hannah & Elsie","Sophia & Hannah","Sophia & Elsie","All three of them"], hint:"Their birthdays are only one day apart — both in the same month!"},
+  {q:"How many days apart are Sophia and Elsie's birthdays?", a:"1 day apart", opts:["Same day","1 day apart","1 week apart","2 days apart"], hint:"Sophia is the 22nd and Elsie is the 23rd — count the gap!"},
+  {q:"Which cousin loves BOTH art AND gymnastics?", a:"Hannah", opts:["Elsie","Sophia","Hannah","All of them"], hint:"One cousin loves being creative AND being athletic!"}
+];
+
 /* SUPABASE */
 const SB_URL = 'https://jrjmkqzjloikdhhatrwa.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impyam1rcXpqbG9pa2RoaGF0cndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwODAyOTEsImV4cCI6MjA5MDY1NjI5MX0.0TYBifEH3uSUMBnrF_Gtu9PJ9KLv20XXZYI_UQ0hf8s';
@@ -794,41 +833,15 @@ async function hostLogin() {
   var pass = document.getElementById('h-pass').value.trim();
   var err = document.getElementById('h-err');
   err.textContent = '';
-  alert('Step 1: name=' + name + ' pass=' + pass + ' HOST_PASS=' + HOST_PASS);
   if (!name) { document.getElementById('h-name').classList.add('err'); err.textContent = 'Please enter your name!'; return; }
   if (pass !== HOST_PASS) { document.getElementById('h-pass').classList.add('err'); err.textContent = 'Wrong password!'; return; }
-  alert('Step 2: password OK, creating game...');
   playerName = name; mode = 'host'; gCode = GAME_CODE;
   gQs = shuffle(ALL_QS).slice(0, TOTAL);
-  alert('Step 3: deleting old game...');
   var delRes = await db.from('games').delete().eq('code', gCode);
-  alert('Step 4: delete done. Error=' + (delRes.error ? delRes.error.message : 'none'));
   var res = await db.from('games').insert({
     code: gCode, status: 'lobby', current_question: 0,
     questions: gQs, scores: {}, players: {}, revealed: false
   });
-  alert('Step 5: insert done. Error=' + (res.error ? res.error.message + ' code=' + res.error.code : 'none'));
-  gQs = shuffle(ALL_QS).slice(0, TOTAL);
-
-  // Show a visible status so we can see what's happening
-  err.textContent = 'Creating game...';
-  err.style.color = '#ffe066';
-
-  var delRes = await db.from('games').delete().eq('code', gCode);
-  err.textContent = 'Deleted old game, inserting...';
-
-  var res = await db.from('games').insert({
-    code: gCode, status: 'lobby', current_question: 0,
-    questions: gQs, scores: {}, players: {}, revealed: false
-  });
-
-  if (res.error) {
-    err.style.color = '#ff5252';
-    err.textContent = 'ERROR: ' + res.error.message + ' | code: ' + res.error.code + ' | hint: ' + (res.error.hint||'none');
-    return;
-  }
-  err.textContent = 'Game created! Loading lobby...';
-  err.style.color = '#4ade80';
   document.getElementById('h-lobby-name').textContent = 'Welcome, ' + playerName + '! \uD83D\uDC51';
   document.getElementById('h-lobby-code').textContent = gCode;
   showScreen('host-lobby');
