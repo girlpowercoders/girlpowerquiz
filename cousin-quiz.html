@@ -793,8 +793,10 @@ async function hostLogin() {
   var pass = document.getElementById('h-pass').value.trim();
   var err = document.getElementById('h-err');
   err.textContent = '';
+  alert('Step 1: name=' + name + ' pass=' + pass + ' HOST_PASS=' + HOST_PASS);
   if (!name) { document.getElementById('h-name').classList.add('err'); err.textContent = 'Please enter your name!'; return; }
   if (pass !== HOST_PASS) { document.getElementById('h-pass').classList.add('err'); err.textContent = 'Wrong password!'; return; }
+  alert('Step 2: password OK, creating game...');
   playerName = name; mode = 'host'; gCode = GAME_CODE;
   gQs = shuffle(ALL_QS).slice(0, TOTAL);
 
