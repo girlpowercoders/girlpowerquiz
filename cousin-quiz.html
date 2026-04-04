@@ -7,7 +7,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Quicksand',sans-serif;min-height:100vh;overflow-x:hidden;background:#0d001a;
+body{font-family:'Quicksand',sans-serif;min-height:100vh;overflow-x:hidden;background:#1a0020;
   cursor:auto;}
 
 /* ═══ SWIRL TIE-DYE BACKGROUND ═══ */
@@ -1195,7 +1195,7 @@ function resizeCanvas() { W = canvas.width = window.innerWidth; H = canvas.heigh
 resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 function drawTieDye() {
   ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = '#0d001a'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#1a0020'; ctx.fillRect(0, 0, W, H);
   var cx = W/2, cy = H/2;
   var colours = [[255,80,200],[160,60,255],[80,160,255],[255,120,220],[200,80,255],[100,200,255],[255,60,180],[120,40,220]];
   var numArms = 6, maxR = Math.max(W, H) * 0.85;
