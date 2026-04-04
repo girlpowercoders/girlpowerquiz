@@ -362,6 +362,12 @@ body{font-family:'Nunito',sans-serif;background:#ede8ff;cursor:none;overflow-x:h
 
   <div class="live-scores" id="hq-scores"></div>
 
+  <!-- HOST TIMER — same as player -->
+  <div class="timer-row">
+    <div class="timer-num" id="hq-t-num">15</div>
+    <div class="timer-track"><div class="timer-fill ok" id="hq-t-fill" style="width:100%"></div></div>
+  </div>
+
   <div class="card q-card">
     <div class="topic-pill" id="hq-topic"></div>
     <div class="q-num" id="hq-num">Question 01</div>
@@ -673,15 +679,18 @@ function showHQ(g){
 
 /* ══ HOST REVEAL ══ */
 function revealH(g){
+  stopTimer();
   const q=g.questions[g.current_question];
+  const currentIdx=g.current_question; // capture NOW before any async
+  const isLast=currentIdx>=g.questions.length-1;
+
   document.querySelectorAll('#hq-opts .opt')[q.a].classList.add('correct');
   document.getElementById('hq-correct').textContent=q.o[q.a];
   document.getElementById('hq-reveal').classList.add('show');
-  const isLast=g.current_question>=g.questions.length-1;
   burst(innerWidth/2,innerHeight*.4);
   renderScores(g.scores||{});
 
-  // Auto-advance after 4 seconds
+  // Show auto-advance bar
   const hint=document.getElementById('hq-action-hint');
   const bar=document.getElementById('hq-auto-bar');
   const fill=document.getElementById('hq-auto-fill');
@@ -689,18 +698,28 @@ function revealH(g){
   let elapsed=0;
   bar.style.display='block';
   fill.style.width='100%';
-  hint.textContent=isLast?'🏆 Showing results in 4 seconds…':'➡️ Next question in 4 seconds…';
+  hint.textContent=isLast?'🏆 Showing leaderboard in 4 seconds…':'➡️ Next question in 4 seconds…';
+
   clearInterval(autoInt);
   autoInt=setInterval(()=>{
     elapsed+=100;
-    fill.style.width=Math.max(0,100-(elapsed/delay*100))+'%';
+    const remaining=Math.max(0,100-(elapsed/delay*100));
+    fill.style.width=remaining+'%';
     if(elapsed>=delay){
       clearInterval(autoInt);
       bar.style.display='none';
-      if(isLast) db.from('games').update({status:'finished'}).eq('code',gCode);
-      else db.from('games').update({status:'question',current_question:g.current_question+1,revealed:false}).eq('code',gCode);
+      if(isLast){
+        db.from('games').update({status:'finished'}).eq('code',gCode);
+      } else {
+        db.from('games').update({
+          status:'question',
+          current_question:currentIdx+1,
+          revealed:false
+        }).eq('code',gCode);
+      }
     }
   },100);
+}
 }
 
 /* ══ HOST REVEAL TRIGGER ══ */
@@ -731,10 +750,16 @@ function stopTimer(){clearInterval(timerInt);}
 function updTimer(){
   const pct=(timerSec/15)*100;
   const cls=timerSec<=5?'danger':timerSec<=9?'warn':'ok';
-  document.getElementById('t-fill').style.width=pct+'%';
-  document.getElementById('t-fill').className='timer-fill '+cls;
-  document.getElementById('t-num').textContent=timerSec;
-  document.getElementById('t-num').className='timer-num'+(timerSec<=5?' danger':timerSec<=9?' warn':'');
+  // Player timer
+  const tf=document.getElementById('t-fill');
+  const tn=document.getElementById('t-num');
+  if(tf){tf.style.width=pct+'%';tf.className='timer-fill '+cls;}
+  if(tn){tn.textContent=timerSec;tn.className='timer-num'+(timerSec<=5?' danger':timerSec<=9?' warn':'');}
+  // Host timer
+  const htf=document.getElementById('hq-t-fill');
+  const htn=document.getElementById('hq-t-num');
+  if(htf){htf.style.width=pct+'%';htf.className='timer-fill '+cls;}
+  if(htn){htn.textContent=timerSec;htn.className='timer-num'+(timerSec<=5?' danger':timerSec<=9?' warn':'');}
 }
 
 /* ══ END GAME ══ */
