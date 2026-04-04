@@ -795,7 +795,8 @@ async function hostLogin() {
     code: gCode, status: 'lobby', current_question: 0,
     questions: gQs, scores: {}, players: {}, revealed: false
   });
-  if (res.error) { err.textContent = 'Could not create game: ' + res.error.message; return; }
+  console.log('Insert result:', JSON.stringify(res));
+  if (res.error) { err.textContent = 'DB Error: ' + res.error.message + ' (code: ' + res.error.code + ')'; return; }
   document.getElementById('h-lobby-name').textContent = 'Welcome, ' + playerName + '! \uD83D\uDC51';
   document.getElementById('h-lobby-code').textContent = gCode;
   showScreen('host-lobby');
